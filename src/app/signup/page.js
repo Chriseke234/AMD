@@ -24,7 +24,7 @@ export default function SignupPage() {
                 data: {
                     full_name: name,
                 },
-                emailRedirectTo: `${getURL()}auth/callback`,
+                emailRedirectTo: `${getURL()}/auth/callback`,
             }
         })
         if (error) alert(error.message)
