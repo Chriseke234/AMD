@@ -1,10 +1,10 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
-export async function middleware(request) {
+export default async function proxy(request) {
     let response = NextResponse.next({
         request: {
-            headers: request.headers,
+            headers: await request.headers,
         },
     })
 
@@ -13,38 +13,39 @@ export async function middleware(request) {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
         {
             cookies: {
-                get(name) {
-                    return request.cookies.get(name)?.value
+                async get(name) {
+                    const cookie = await request.cookies.get(name)
+                    return cookie?.value
                 },
-                set(name, value, options) {
-                    request.cookies.set({
+                async set(name, value, options) {
+                    await request.cookies.set({
                         name,
                         value,
                         ...options,
                     })
                     response = NextResponse.next({
                         request: {
-                            headers: request.headers,
+                            headers: await request.headers,
                         },
                     })
-                    response.cookies.set({
+                    await response.cookies.set({
                         name,
                         value,
                         ...options,
                     })
                 },
-                remove(name, options) {
-                    request.cookies.set({
+                async remove(name, options) {
+                    await request.cookies.set({
                         name,
                         value: '',
                         ...options,
                     })
                     response = NextResponse.next({
                         request: {
-                            headers: request.headers,
+                            headers: await request.headers,
                         },
                     })
-                    response.cookies.set({
+                    await response.cookies.set({
                         name,
                         value: '',
                         ...options,

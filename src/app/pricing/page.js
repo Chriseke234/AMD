@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import { Check, Sparkles, Zap, ShieldCheck } from "lucide-react"
 import { Navbar } from "@/components/Navbar"
@@ -46,8 +47,8 @@ export default function PricingPage() {
                             <div
                                 key={i}
                                 className={`relative flex flex-col p-8 rounded-3xl border transition-all hover:scale-105 ${p.highlight
-                                        ? 'border-[var(--primary)] bg-white shadow-2xl z-10'
-                                        : 'border-[var(--border)] glass'
+                                    ? 'border-[var(--primary)] bg-white shadow-2xl z-10'
+                                    : 'border-[var(--border)] glass'
                                     }`}
                             >
                                 {p.highlight && (
@@ -74,9 +75,11 @@ export default function PricingPage() {
                                     ))}
                                 </ul>
 
-                                <Button variant={p.variant} size="lg" className="w-full">
-                                    {p.cta}
-                                </Button>
+                                <Link href="/signup" className="w-full">
+                                    <Button variant={p.variant} size="lg" className="w-full">
+                                        {p.cta}
+                                    </Button>
+                                </Link>
                             </div>
                         ))}
                     </div>

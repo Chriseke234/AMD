@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "./ui/Button";
 
 export function Navbar() {
@@ -18,8 +19,12 @@ export function Navbar() {
                 </div>
 
                 <div className="flex items-center space-x-4">
-                    <Button variant="ghost" size="sm">Login</Button>
-                    <Button size="sm">Sign Up</Button>
+                    <Link href="/login">
+                        <Button variant="ghost" size="sm">Login</Button>
+                    </Link>
+                    <Link href="/signup">
+                        <Button size="sm">Sign Up</Button>
+                    </Link>
                 </div>
             </div>
         </nav>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "./ui/Button";
 
 export function Hero() {
@@ -28,8 +29,12 @@ export function Hero() {
                 </p>
 
                 <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-                    <Button size="lg" className="w-full sm:w-auto">Get Started Free</Button>
-                    <Button variant="outline" size="lg" className="w-full sm:w-auto">View Demo</Button>
+                    <Link href="/signup" className="w-full sm:w-auto">
+                        <Button size="lg" className="w-full">Get Started Free</Button>
+                    </Link>
+                    <Link href="/pricing" className="w-full sm:w-auto">
+                        <Button variant="outline" size="lg" className="w-full">View Demo</Button>
+                    </Link>
                 </div>
 
                 {/* Mockup Preview Area */}
