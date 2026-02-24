@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { createClient } from "@/lib/supabase"
+import { getURL } from "@/lib/auth-helpers"
 
 export default function SignupPage() {
     const [email, setEmail] = useState("")
@@ -22,7 +23,8 @@ export default function SignupPage() {
             options: {
                 data: {
                     full_name: name,
-                }
+                },
+                emailRedirectTo: `${getURL()}auth/callback`,
             }
         })
         if (error) alert(error.message)

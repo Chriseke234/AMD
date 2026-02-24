@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { createClient } from "@/lib/supabase"
+import { getURL } from "@/lib/auth-helpers"
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
@@ -21,7 +22,12 @@ export default function LoginPage() {
     }
 
     const handleGoogleLogin = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${getURL()}auth/callback`,
+            }
+        })
         if (error) alert(error.message)
     }
 
