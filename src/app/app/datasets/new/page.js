@@ -1,14 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/Button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
+import { Card } from "@/components/ui/Card"
 import { Input } from "@/components/ui/Input"
-import { Upload, FileText, CheckCircle2, AlertCircle } from "lucide-react"
+import { Upload, FileText, CheckCircle2, Database, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/supabase"
 
-export default function NewDatasetPage() {
+function NewDatasetContent() {
     const [file, setFile] = useState(null)
     const [uploading, setUploading] = useState(false)
     const [status, setStatus] = useState("idle") // idle, uploading, success, error
@@ -20,7 +20,7 @@ export default function NewDatasetPage() {
         if (searchParams.get('connected') === 'google') {
             router.push('/app/datasets/connect/google')
         }
-    }, [searchParams])
+    }, [searchParams, router])
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -136,5 +136,17 @@ export default function NewDatasetPage() {
                 </div>
             )}
         </div>
+    )
+}
+
+export default function NewDatasetPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center h-64">
+                <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            </div>
+        }>
+            <NewDatasetContent />
+        </Suspense>
     )
 }

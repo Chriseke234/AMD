@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { createClient } from "@/lib/supabase"
 import { getURL } from "@/lib/auth-helpers"
 import { Sparkles, Mail, Lock, Github, Chrome } from "lucide-react"
+import Link from "next/link"
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
