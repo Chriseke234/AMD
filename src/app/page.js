@@ -87,32 +87,32 @@ export default function Home() {
       </section>
 
       {/* Bento Grid Features */}
-      <section id="features" className="py-40 bg-background relative overflow-hidden">
+      <section id="features" className="py-40 bg-[#fafafa] relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent opacity-50" />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_right,rgba(124,58,237,0.05),transparent_40%)]" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_right,rgba(124,58,237,0.08),transparent_40%)]" />
 
         <div className="container px-4 mx-auto">
           <div className="max-w-4xl mb-32 text-center mx-auto animation-fade-up">
-            <div className="inline-flex items-center px-4 py-1.5 mb-8 text-[10px] font-black uppercase tracking-[0.3em] border rounded-full bg-primary/5 text-primary border-primary/20">
+            <div className="inline-flex items-center px-5 py-2 mb-10 text-[11px] font-black uppercase tracking-[0.4em] border rounded-full bg-primary/5 text-primary border-primary/20 shadow-sm">
               Core Capabilities
             </div>
-            <h2 className="text-5xl font-black mb-6 lg:text-7xl tracking-tighter italic leading-tight">Built for <span className="text-primary underline decoration-primary/20 decoration-8 underline-offset-8">Scale.</span> <br />Design for Clarity.</h2>
-            <p className="text-xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">AskMyData melds high-fidelity AI with production-grade data infrastructure for the ultimate intelligence experience.</p>
+            <h2 className="text-6xl font-black mb-10 lg:text-8xl tracking-tighter italic leading-[0.9] font-heading">Built for <span className="text-primary underline decoration-primary/20 decoration-8 underline-offset-12">Scale.</span> <br />Design for Clarity.</h2>
+            <p className="text-xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed opacity-70">AskMyData melds high-fidelity AI with production-grade data infrastructure for the ultimate intelligence experience.</p>
           </div>
 
-          <div id="solutions" className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          <div id="solutions" className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-7xl mx-auto">
             {features.map((f, i) => (
               <div
                 key={i}
-                className={`p-12 rounded-[3rem] border border-border/50 glass group hover:border-primary/50 transition-all duration-700 animation-fade-up card-shine ${f.className}`}
+                className={`p-14 rounded-[3.5rem] border border-border/60 glass group hover:border-primary/40 transition-all duration-700 animation-fade-up card-shine shadow-xl shadow-black/[0.02] ${f.className}`}
                 style={{ animationDelay: f.delay }}
               >
-                <div className="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-primary/10 to-transparent flex items-center justify-center mb-8 border border-primary/10 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-primary/20 transition-all duration-500">
-                  <f.icon className="w-8 h-8 text-primary" />
+                <div className="w-20 h-20 rounded-[2.2rem] bg-white flex items-center justify-center mb-10 border border-slate-100 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-primary/20 transition-all duration-500 shadow-lg">
+                  <f.icon className="w-10 h-10 text-primary" />
                 </div>
-                <h3 className="text-2xl font-black italic tracking-tight mb-4">{f.title}</h3>
-                <p className="text-muted-foreground text-base leading-relaxed font-medium">{f.description}</p>
+                <h3 className="text-2xl font-black italic tracking-tight mb-5 font-heading uppercase">{f.title}</h3>
+                <p className="text-muted-foreground text-lg leading-relaxed font-medium opacity-80">{f.description}</p>
               </div>
             ))}
           </div>
