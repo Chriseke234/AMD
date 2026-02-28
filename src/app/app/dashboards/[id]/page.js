@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/Button"
 import { Card } from "@/components/ui/Card"
-import { Layout, ArrowLeft, Share2, Plus, Loader2, Trash2, Maximize2, Sparkles, TrendingUp, Calendar, Zap } from "lucide-react"
+import { Layout, ArrowLeft, ChevronLeft, Share2, Plus, Loader2, Trash2, Maximize2, Sparkles, TrendingUp, Calendar, Zap } from "lucide-react"
 import Link from "next/link"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from 'recharts'
 
