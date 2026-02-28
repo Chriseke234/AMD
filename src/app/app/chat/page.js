@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Card } from "@/components/ui/Card"
 import {
-    Send, Sparkles, Database, Trash2, Layout, Plus, Check, ChevronRight, Download, Share2,
+    Send, Sparkles, Database, Trash2, Layout, Plus, Check, ChevronRight, ChevronDown, Download, Share2,
     BarChart3, LineChart as LineChartIcon, PieChart as PieChartIcon, Table as TableIcon,
     Pin, Save, Loader2, X, Info, AlertCircle
 } from "lucide-react"
