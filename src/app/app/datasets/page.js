@@ -4,36 +4,51 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
-import { Database, Plus, Trash2, Calendar, FileText, ChevronRight } from "lucide-react"
+import {
+    FileText, Database, Plus, Search, Filter, Loader2, Trash2,
+    Table, CheckCircle2, AlertCircle, RefreshCw, MoreVertical,
+    ExternalLink, HardDrive, LayoutGrid, Users, Calendar, ChevronRight
+} from "lucide-react"
 import { createClient } from "@/lib/supabase"
 
 export default function DatasetsPage() {
     const [datasets, setDatasets] = useState([])
     const [loading, setLoading] = useState(true)
+    const [teams, setTeams] = useState([])
+    const [selectedTeam, setSelectedTeam] = useState(null)
     const supabase = createClient()
     const router = useRouter()
 
     useEffect(() => {
-        fetchDatasets()
+        const fetchData = async () => {
+            const { data: ds } = await supabase.from('datasets').select('*').order('created_at', { ascending: false })
+            const { data: ts } = await supabase.from('teams').select('*')
+            if (ds) setDatasets(ds)
+            if (ts) setTeams(ts)
+            setLoading(false)
+        }
+        fetchData()
     }, [])
-
-    const fetchDatasets = async () => {
-        const { data, error } = await supabase
-            .from('datasets')
-            .select('*')
-            .order('created_at', { ascending: false })
-
-        if (error) console.error(error)
-        else setDatasets(data || [])
-        setLoading(false)
-    }
 
     const deleteDataset = async (id, tableName) => {
         if (!confirm("Are you sure you want to delete this dataset?")) return
 
         const { error } = await supabase.from('datasets').delete().eq('id', id)
         if (error) alert(error.message)
-        else fetchDatasets()
+        else {
+            setDatasets(datasets.filter(d => d.id !== id))
+        }
+    }
+
+    const handleMoveToTeam = async (datasetId, teamId) => {
+        const { error } = await supabase
+            .from('datasets')
+            .update({ team_id: teamId })
+            .eq('id', datasetId)
+
+        if (!error) {
+            setDatasets(datasets.map(d => d.id === datasetId ? { ...d, team_id: teamId } : d))
+        }
     }
 
     return (
@@ -82,9 +97,19 @@ export default function DatasetsPage() {
                                     </div>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <div className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
-                                        Score: {ds.health_score}
-                                    </div>
+                                    {ds.status === 'processing' || ds.status === 'pending' ? (
+                                        <div className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold animate-pulse">
+                                            {ds.status === 'processing' ? 'Processing...' : 'Queued'}
+                                        </div>
+                                    ) : ds.status === 'failed' ? (
+                                        <div className="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold" title={ds.error_message}>
+                                            Failed
+                                        </div>
+                                    ) : (
+                                        <div className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
+                                            Score: {ds.health_score}
+                                        </div>
+                                    )}
                                     <button
                                         onClick={() => deleteDataset(ds.id, ds.table_name)}
                                         className="p-2 text-[var(--muted-foreground)] hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
@@ -94,6 +119,33 @@ export default function DatasetsPage() {
                                     <ChevronRight className="w-5 h-5 text-[var(--muted-foreground)] group-hover:text-[var(--primary)] transition-colors" />
                                 </div>
                             </div>
+
+                            {/* Team Sharing Control */}
+                            {teams.length > 0 && (
+                                <div className="px-6 py-3 border-t bg-[var(--muted)]/5 flex items-center justify-between">
+                                    <div className="flex items-center text-[10px] font-bold uppercase tracking-wider">
+                                        {ds.team_id ? (
+                                            <span className="flex items-center text-primary">
+                                                <Users className="w-3 h-3 mr-1" /> Team Shared
+                                            </span>
+                                        ) : (
+                                            <span className="flex items-center text-[var(--muted-foreground)]">
+                                                <HardDrive className="w-3 h-3 mr-1" /> Private
+                                            </span>
+                                        )}
+                                    </div>
+                                    <select
+                                        className="text-[10px] font-bold uppercase tracking-widest bg-transparent border-none focus:ring-0 text-primary cursor-pointer hover:underline"
+                                        value={ds.team_id || ""}
+                                        onChange={(e) => handleMoveToTeam(ds.id, e.target.value)}
+                                    >
+                                        <option value="">{ds.team_id ? 'Unshare / Move' : 'Share with Team'}</option>
+                                        {teams.map(t => (
+                                            <option key={t.id} value={t.id}>{t.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
                         </Card>
                     ))}
                 </div>

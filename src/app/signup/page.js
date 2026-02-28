@@ -34,65 +34,74 @@ export default function SignupPage() {
     }
 
     return (
-        <div className="flex min-h-screen bg-background">
-            {/* Left: Branding & Illustration (Shared with Login) */}
-            <div className="hidden lg:flex lg:w-[45%] bg-[#0a0a0b] relative overflow-hidden p-16 flex-col justify-between">
-                <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full animation-pulse-slow" />
-                <div className="absolute bottom-1/4 right-0 w-[300px] h-[300px] bg-primary/10 blur-[100px] rounded-full animation-pulse-slow" style={{ animationDelay: '2s' }} />
+        <div className="flex min-h-screen bg-background selection:bg-primary selection:text-white">
+            {/* Left: Branding & Illustration */}
+            <div className="hidden lg:flex lg:w-[45%] bg-[#030303] relative overflow-hidden p-20 flex-col justify-between border-r border-white/5">
+                {/* Background Glows with Animation */}
+                <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-primary/20 blur-[130px] rounded-full animation-pulse-slow animate-mesh" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/15 blur-[110px] rounded-full animation-pulse-slow animate-mesh" style={{ animationDelay: '2s' }} />
 
-                <div className="relative z-10 flex items-center space-x-3">
-                    <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center font-bold text-2xl text-white shadow-xl shadow-primary/30">
-                        A
+                <div className="relative z-10">
+                    <Link href="/" className="flex items-center space-x-4 group mb-24">
+                        <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center font-black text-2xl text-white shadow-2xl shadow-primary/40 group-hover:scale-110 transition-transform">
+                            A
+                        </div>
+                        <span className="text-3xl font-black tracking-tighter text-white">AskMyData</span>
+                    </Link>
+
+                    <div className="space-y-10">
+                        <div className="inline-flex items-center px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] border rounded-full border-white/10 bg-white/5 text-primary backdrop-blur-md shadow-[0_0_20px_rgba(124,58,237,0.1)]">
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Elite Infrastructure
+                        </div>
+                        <h2 className="text-6xl font-black text-white leading-[0.9] tracking-tighter italic">
+                            Experience <br /> pure <span className="text-primary tracking-tighter not-italic">Intelligence.</span>
+                        </h2>
+                        <p className="text-xl text-white/50 font-medium max-w-md leading-relaxed">
+                            Unlock the full potential of your datasets with our multi-model AI orchestration engine.
+                        </p>
                     </div>
-                    <span className="text-2xl font-bold tracking-tight text-white">AskMyData</span>
                 </div>
 
                 <div className="relative z-10">
-                    <div className="inline-flex items-center px-4 py-1.5 mb-8 text-sm font-semibold border rounded-full border-white/10 bg-white/5 text-primary-foreground backdrop-blur-md">
-                        <ShieldCheck className="w-4 h-4 mr-2" />
-                        Enterprise-Grade Infrastructure
-                    </div>
-                    <h2 className="text-5xl font-black text-white mb-8 leading-tight">
-                        Experience the <br /><span className="text-primary italic">Intelligence</span> difference.
-                    </h2>
-
-                    <div className="grid grid-cols-2 gap-4 relative z-10">
+                    <div className="grid grid-cols-2 gap-6 relative z-10">
                         {[
                             "Unlimited Datasets",
-                            "Advanced AI Logic",
-                            "Secure Collaboration",
-                            "Real-time Updates"
+                            "Neural AI Logic",
+                            "Team Governance",
+                            "Stripe Billing"
                         ].map((text, i) => (
-                            <div key={i} className="flex items-center space-x-2 text-white/70 text-sm font-medium">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                <span>{text}</span>
+                            <div key={i} className="flex items-center space-x-4 p-4 rounded-2xl glass border-white/5 group hover:border-primary/20 transition-all">
+                                <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(124,58,237,0.5)]" />
+                                <span className="text-white/80 text-xs font-black uppercase tracking-widest">{text}</span>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                <div className="relative z-10 text-sm text-white/40 font-medium">
-                    © 2026 AskMyData. Your Data, Mastered.
+                <div className="relative z-10 text-[10px] text-white/20 font-black uppercase tracking-[0.4em]">
+                    © 2026 AskMyData Systems.
                 </div>
             </div>
 
             {/* Right: Auth Form */}
-            <div className="w-full lg:w-[55%] flex items-center justify-center p-8 lg:p-24 overflow-y-auto">
-                <div className="w-full max-w-lg space-y-8 animation-fade-up">
-                    <div className="space-y-2">
-                        <h1 className="text-4xl font-black tracking-tight">Create an account</h1>
-                        <p className="text-muted-foreground text-lg">Start your journey with AskMyData today.</p>
+            <div className="w-full lg:w-[55%] flex items-center justify-center p-8 lg:p-24 overflow-y-auto relative">
+                <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_bottom_right,rgba(124,58,237,0.03),transparent_40%)] pointer-events-none" />
+                <div className="w-full max-w-xl space-y-12 animation-fade-up relative z-10">
+                    <div className="space-y-4">
+                        <h1 className="text-5xl font-black tracking-tighter italic">Create <span className="text-primary tracking-tighter">Account.</span></h1>
+                        <p className="text-muted-foreground text-xl font-medium">Join the next generation of data-driven leaders.</p>
                     </div>
 
-                    <form onSubmit={handleSignup} className="space-y-6">
-                        <div className="space-y-3">
-                            <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground/80">Full Name</label>
+                    <form onSubmit={handleSignup} className="space-y-8">
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 ml-1">Identity Name</label>
                             <div className="relative group">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                                <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40 transition-colors group-focus-within:text-primary" />
                                 <Input
                                     type="text"
-                                    placeholder="John Doe"
-                                    className="h-14 pl-12 rounded-2xl border-border/50 focus:border-primary/50 transition-all text-base"
+                                    placeholder="Full Name"
+                                    className="h-16 pl-14 rounded-[1.5rem] border-border/50 focus:border-primary/50 transition-all text-base font-medium shadow-sm"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     required
@@ -100,14 +109,14 @@ export default function SignupPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground/80">Email Address</label>
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 ml-1">Email Destination</label>
                             <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40 transition-colors group-focus-within:text-primary" />
                                 <Input
                                     type="email"
                                     placeholder="your@email.com"
-                                    className="h-14 pl-12 rounded-2xl border-border/50 focus:border-primary/50 transition-all text-base"
+                                    className="h-16 pl-14 rounded-[1.5rem] border-border/50 focus:border-primary/50 transition-all text-base font-medium shadow-sm"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -115,14 +124,14 @@ export default function SignupPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground/80">Password</label>
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 ml-1">Access Credentials</label>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40 transition-colors group-focus-within:text-primary" />
                                 <Input
                                     type="password"
-                                    placeholder="Create a strong password"
-                                    className="h-14 pl-12 rounded-2xl border-border/50 focus:border-primary/50 transition-all text-base"
+                                    placeholder="Create strong password"
+                                    className="h-16 pl-14 rounded-[1.5rem] border-border/50 focus:border-primary/50 transition-all text-base font-medium shadow-sm"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -130,9 +139,9 @@ export default function SignupPage() {
                             </div>
                         </div>
 
-                        <Button className="w-full h-14 rounded-2xl text-base font-bold shadow-xl shadow-primary/20 group" disabled={loading}>
-                            {loading ? "Creating account..." : "Create My Account"}
-                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        <Button className="w-full h-18 rounded-[1.5rem] text-xs font-black uppercase tracking-[0.3em] shadow-2xl shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all group" disabled={loading}>
+                            {loading ? "Registering..." : "Initialize Profile"}
+                            <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-2 transition-transform" />
                         </Button>
                     </form>
 
@@ -140,14 +149,17 @@ export default function SignupPage() {
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t border-border/50" />
                         </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-4 text-muted-foreground font-bold tracking-widest leading-none">Security Guaranteed</span>
+                        <div className="relative flex justify-center text-[10px] uppercase font-black tracking-[0.4em]">
+                            <span className="bg-background px-6 text-muted-foreground/40 leading-none italic flex items-center">
+                                <ShieldCheck className="w-3 h-3 mr-2" />
+                                Secure Registration Protocol
+                            </span>
                         </div>
                     </div>
 
-                    <p className="text-center text-base text-muted-foreground font-medium">
-                        Already have an account?{" "}
-                        <a href="/login" className="text-primary font-bold hover:underline transition-all underline-offset-4">Sign in</a>
+                    <p className="text-center text-sm text-muted-foreground font-semibold">
+                        Already have access?{" "}
+                        <a href="/login" className="text-primary font-black uppercase tracking-widest hover:underline transition-all underline-offset-4 ml-2">Authenticate</a>
                     </p>
                 </div>
             </div>
