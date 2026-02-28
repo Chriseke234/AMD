@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Card } from "@/components/ui/Card"
 import {
-    Send, Sparkles, Database, Trash2, Layout, Plus, Check, ChevronRight, ChevronDown, Download, Share2,
+    Send, Sparkles, Database, Trash2, Layout, Plus, Check, ChevronRight, ChevronDown as ChevronDownIcon, Download, Share2,
     BarChart3, LineChart as LineChartIcon, PieChart as PieChartIcon, Table as TableIcon,
     Pin, Save, Loader2, X, Info, AlertCircle
 } from "lucide-react"
@@ -268,7 +268,7 @@ export default function AnalyticsChat() {
                     >
                         <Database className="w-4 h-4 mr-2 text-primary" />
                         {selectedIds.length} {selectedIds.length === 1 ? 'Dataset' : 'Datasets'} Selected
-                        <ChevronDown className={`w-4 h-4 ml-2 transition-transform ${showDatasetSelector ? 'rotate-180' : ''}`} />
+                        <ChevronDownIcon className={`w-4 h-4 ml-2 transition-transform ${showDatasetSelector ? 'rotate-180' : ''}`} />
                     </Button>
 
                     {showDatasetSelector && (
