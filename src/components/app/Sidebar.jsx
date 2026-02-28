@@ -32,7 +32,9 @@ export function Sidebar() {
                     <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-white font-black text-xl shadow-2xl shadow-primary/40 group-hover:scale-110 transition-transform">
                         A
                     </div>
-                    <span className="text-2xl font-black tracking-tighter text-white">AskMyData</span>
+                    <span className="text-2xl font-black tracking-tighter text-white font-heading italic">
+                        AskMyData<span className="text-primary not-italic">.</span>
+                    </span>
                 </Link>
             </div>
 
@@ -41,16 +43,18 @@ export function Sidebar() {
                 <div className="px-4">
                     <button
                         onClick={() => router.push('/app/datasets/new')}
-                        className="w-full flex items-center justify-center space-x-3 h-14 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all group"
+                        className="w-full flex items-center justify-center space-x-3 h-14 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all group relative overflow-hidden"
                     >
-                        <PlusCircle className="w-4 h-4 group-hover:rotate-90 transition-transform duration-500" />
-                        <span>Initialize Data</span>
+                        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <PlusCircle className="w-4 h-4 group-hover:rotate-90 transition-transform duration-500 relative z-10" />
+                        <span className="relative z-10">Initialize Data</span>
                     </button>
                 </div>
 
                 <div className="space-y-1">
-                    <div className="px-6 mb-4">
+                    <div className="px-6 mb-4 flex items-center justify-between">
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/10">Main Systems</span>
+                        <div className="h-px flex-1 bg-white/5 ml-4" />
                     </div>
                     {navItems.map((item) => {
                         const isActive = pathname === item.href
@@ -59,16 +63,16 @@ export function Sidebar() {
                                 key={item.name}
                                 href={item.href}
                                 className={`flex items-center px-6 py-4 space-x-4 text-xs font-black uppercase tracking-[0.2em] rounded-[1.2rem] transition-all relative group ${isActive
-                                    ? "text-primary bg-primary/5"
-                                    : "text-white/30 hover:text-white/60 hover:bg-white/[0.02]"
+                                    ? "text-primary bg-primary/10 shadow-[inset_0_0_20px_rgba(124,58,237,0.05)]"
+                                    : "text-white/30 hover:text-white/80 hover:bg-white/[0.03]"
                                     }`}
                             >
                                 {isActive && (
                                     <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-full shadow-[0_0_15px_rgba(124,58,237,0.8)]" />
                                 )}
-                                <item.icon className={`w-5 h-5 transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`} />
-                                <span className="flex-1 italic">{item.name}</span>
-                                {isActive && <ChevronRight className="w-3 h-3 opacity-40" />}
+                                <item.icon className={`w-5 h-5 transition-all duration-300 ${isActive ? "scale-110 text-primary" : "group-hover:scale-110 group-hover:text-white"}`} />
+                                <span className={`flex-1 transition-colors duration-300 ${isActive ? "font-bold" : "group-hover:text-white"}`}>{item.name}</span>
+                                {isActive && <ChevronRight className="w-3 h-3 opacity-40 animate-pulse" />}
                             </Link>
                         )
                     })}
