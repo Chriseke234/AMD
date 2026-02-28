@@ -3,6 +3,8 @@
 import { LayoutDashboard, Users, CreditCard, ShieldCheck, Activity, Settings, LogOut, Package } from "lucide-react"
 import { usePathname } from "next/navigation"
 
+import Link from "next/link"
+
 export function AdminSidebar() {
     const pathname = usePathname()
 
@@ -18,27 +20,27 @@ export function AdminSidebar() {
     return (
         <div className="flex flex-col w-64 h-screen border-r border-[#334155] bg-[#0f172a] text-slate-300">
             <div className="flex items-center h-16 px-6 border-b border-[#334155]">
-                <div className="flex items-center space-x-2">
+                <Link href="/" className="flex items-center space-x-2">
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--primary)] text-white font-bold">A</div>
                     <span className="text-xl font-bold tracking-tight text-white">Admin Hub</span>
-                </div>
+                </Link>
             </div>
 
             <div className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href
                     return (
-                        <a
+                        <Link
                             key={item.name}
                             href={item.href}
                             className={`flex items-center px-4 py-2 space-x-3 text-sm font-medium rounded-lg transition-colors ${isActive
-                                    ? "bg-[var(--primary)] text-white"
-                                    : "hover:bg-[#1e293b] hover:text-white"
+                                ? "bg-[var(--primary)] text-white"
+                                : "hover:bg-[#1e293b] hover:text-white"
                                 }`}
                         >
                             <item.icon className="w-5 h-5" />
                             <span>{item.name}</span>
-                        </a>
+                        </Link>
                     )
                 })}
             </div>
