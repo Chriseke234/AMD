@@ -25,12 +25,11 @@ AskMyData is a high-performance, production-ready AI analytics platform that all
 - A Supabase Project
 
 ### 2. Environment Variables
-Create a `.env.local` file in the root directory and add the following:
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+Create a `.env.local` file in the root directory based on the `.env.example` file:
+```bash
+cp .env.example .env.local
 ```
+Then, update the values with your actual Supabase and App credentials.
 
 ### 3. Installation
 ```bash
