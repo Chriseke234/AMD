@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { Card } from "@/components/ui/Card"
 import { Input } from "@/components/ui/Input"
-import { Upload, FileText, CheckCircle2, Database, Loader2 } from "lucide-react"
+import { Upload, FileText, CheckCircle2, Database, Loader2, AlertCircle } from "lucide-react"
 import { createClient } from "@/lib/supabase"
 
 function NewDatasetContent() {
@@ -19,6 +19,9 @@ function NewDatasetContent() {
     useEffect(() => {
         if (searchParams.get('connected') === 'google') {
             router.push('/app/datasets/connect/google')
+        }
+        if (searchParams.get('error') === 'google_config_missing') {
+            setStatus("config_error")
         }
     }, [searchParams, router])
 
@@ -79,6 +82,27 @@ function NewDatasetContent() {
                 <h1 className="text-3xl font-bold tracking-tight">Upload New Dataset</h1>
                 <p className="text-[var(--muted-foreground)] text-lg">Supported formats: CSV, Excel (.xlsx, .xls)</p>
             </div>
+
+            {status === "config_error" && (
+                <div className="p-6 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start space-x-4 animate-in fade-in slide-in-from-top-4">
+                    <AlertCircle className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
+                    <div>
+                        <h3 className="font-bold text-red-500">Google Auth Configuration Missing</h3>
+                        <p className="text-sm text-red-400 leading-relaxed mb-4">
+                            To connect Google Sheets, you need to set up OAuth keys in your `.env.local` file.
+                            Please refer to the setup guide I created for you.
+                        </p>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="bg-white/10 border-white/10 hover:bg-white/20 text-white"
+                            onClick={() => setStatus("idle")}
+                        >
+                            Dismiss
+                        </Button>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="p-8 border-dashed border-2 flex flex-col items-center justify-center text-center hover:border-primary/50 transition-colors cursor-pointer group" onClick={() => document.getElementById('file-upload').click()}>

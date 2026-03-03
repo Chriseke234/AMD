@@ -24,13 +24,30 @@ export async function GET(request) {
         }
     )
 
+    const clientID = process.env.GOOGLE_CLIENT_ID
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL
+
+    if (!clientID || !clientSecret || !appUrl) {
+        console.error("Missing Google Auth environment variables")
+        return NextResponse.redirect(`${appUrl || 'http://localhost:3000'}/app/datasets/new?error=google_config_missing`)
+    }
+
     if (!code) {
         // Step 1: Redirect to Google
-        const clientID = process.env.GOOGLE_CLIENT_ID
-        const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/connect/google`
+        const redirectUri = `${appUrl}/api/connect/google`
         const scope = 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.readonly'
 
-        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientID}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`
+        const params = new URLSearchParams({
+            client_id: clientID,
+            redirect_uri: redirectUri,
+            response_type: 'code',
+            scope: scope,
+            access_type: 'offline',
+            prompt: 'consent'
+        })
+
+        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
 
         return NextResponse.redirect(authUrl)
     }
