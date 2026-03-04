@@ -48,47 +48,47 @@ export function Pricing() {
     ];
 
     return (
-        <section id="pricing" className="py-40 bg-[#fafafa] relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(124,58,237,0.08),transparent_40%)]" />
-            <div className="container px-4 mx-auto relative z-10">
-                <div className="max-w-3xl mb-32 text-center mx-auto animation-fade-up">
-                    <div className="inline-flex items-center px-5 py-2 mb-10 text-[11px] font-black uppercase tracking-[0.4em] border rounded-full bg-primary/5 text-primary border-primary/20 shadow-sm">
+        <section id="pricing" className="py-24 sm:py-40 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,var(--primary),transparent_40%)] opacity-[0.05]" />
+            <div className="container px-6 mx-auto relative z-10">
+                <div className="max-w-3xl mb-16 sm:mb-24 text-center mx-auto animate-fade-in">
+                    <div className="inline-flex items-center px-5 py-2 mb-8 text-[11px] font-bold uppercase tracking-[0.4em] border rounded-full bg-primary/5 text-primary border-primary/20 shadow-sm">
                         Tiered Plans
                     </div>
-                    <h2 className="text-6xl font-black mb-10 lg:text-8xl tracking-tighter italic font-heading">Simple, <span className="text-primary tracking-tighter">Transparent</span> Pricing.</h2>
-                    <p className="text-xl text-muted-foreground font-medium opacity-70">Start for free and scale as your data intelligence requirements grow.</p>
+                    <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black mb-6 tracking-tighter italic leading-tight">Simple, <span className="text-primary">Transparent</span> Pricing.</h2>
+                    <p className="text-lg sm:text-xl text-muted-foreground font-medium opacity-70">Start for free and scale as your data intelligence requirements grow.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-7xl mx-auto items-center">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto items-stretch">
                     {tiers.map((tier, i) => (
                         <div
                             key={i}
-                            className={`relative p-14 rounded-[4rem] border transition-all duration-700 animation-fade-up card-shine ${tier.highlighted
-                                ? 'bg-white border-primary shadow-[0_48px_96px_-24px_rgba(124,58,237,0.25)] scale-110 z-10'
-                                : 'bg-white/40 backdrop-blur-xl border-border/60 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5'
+                            className={`relative p-8 sm:p-14 rounded-[3rem] border transition-all duration-500 animate-fade-in flex flex-col ${tier.highlighted
+                                ? 'bg-card border-primary shadow-[0_32px_64px_-16px_rgba(124,58,237,0.2)] md:scale-105 z-10 ring-4 ring-primary/5'
+                                : 'bg-card/50 backdrop-blur-xl border-border hover:border-primary/30'
                                 }`}
                             style={{ animationDelay: `${0.1 + (i * 0.1)}s` }}
                         >
                             {tier.highlighted && (
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-[11px] font-black uppercase tracking-[0.3em] px-8 py-3 rounded-full shadow-2xl shadow-primary/40 animate-bounce-slow">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-2 rounded-full shadow-xl">
                                     <Sparkles className="w-4 h-4 inline mr-2" />
                                     Recommended
                                 </div>
                             )}
-                            <div className="mb-12">
-                                <h3 className={`text-3xl font-black italic uppercase tracking-tight mb-3 font-heading ${tier.highlighted ? 'text-primary' : ''}`}>{tier.name}</h3>
-                                <p className="text-base text-muted-foreground font-medium opacity-70">{tier.description}</p>
+                            <div className="mb-8">
+                                <h3 className={`text-2xl font-black italic uppercase tracking-tight mb-2 ${tier.highlighted ? 'text-primary' : ''}`}>{tier.name}</h3>
+                                <p className="text-sm text-muted-foreground font-medium opacity-70">{tier.description}</p>
                             </div>
-                            <div className="mb-14 flex items-baseline">
-                                <span className={`text-5xl font-black font-heading ${tier.highlighted ? 'text-primary' : ''}`}>{tier.price === 'Custom' ? '' : '$'}</span>
-                                <span className={`text-[6rem] font-black tracking-tighter font-heading leading-none ${tier.highlighted ? 'text-primary' : ''}`}>{tier.price}</span>
-                                {tier.price !== 'Custom' && <span className="text-muted-foreground font-black ml-3 uppercase text-xs tracking-[0.3em] opacity-60">/mo</span>}
+                            <div className="mb-10 flex items-baseline">
+                                <span className={`text-4xl font-black font-heading ${tier.highlighted ? 'text-primary' : ''}`}>{tier.price === 'Custom' ? '' : '$'}</span>
+                                <span className={`text-6xl sm:text-7xl font-black tracking-tighter leading-none ${tier.highlighted ? 'text-primary' : ''}`}>{tier.price}</span>
+                                {tier.price !== 'Custom' && <span className="text-muted-foreground font-bold ml-2 uppercase text-[10px] tracking-[0.2em] opacity-60">/mo</span>}
                             </div>
-                            <ul className="space-y-6 mb-16">
+                            <ul className="space-y-4 mb-10 flex-1">
                                 {tier.features.map((feature, j) => (
-                                    <li key={j} className="flex items-center text-base font-semibold tracking-tight opacity-90">
-                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center mr-5 shrink-0 shadow-md ${tier.highlighted ? 'bg-primary text-white' : 'bg-primary/10 text-primary'}`}>
-                                            <Check className="w-4 h-4" />
+                                    <li key={j} className="flex items-center text-sm sm:text-base font-medium tracking-tight">
+                                        <div className={`w-6 h-6 rounded-full flex items-center justify-center mr-4 shrink-0 ${tier.highlighted ? 'bg-primary text-white' : 'bg-primary/10 text-primary'}`}>
+                                            <Check className="w-3 h-3" />
                                         </div>
                                         {feature}
                                     </li>
@@ -96,8 +96,7 @@ export function Pricing() {
                             </ul>
                             <Link href="/signup">
                                 <Button
-                                    className={`w-full h-20 rounded-[2rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl transition-all hover:scale-[1.03] active:scale-95 border-none ${tier.highlighted ? 'shadow-primary/40 bg-primary hover:bg-primary-hover' : 'bg-slate-900 text-white hover:bg-slate-800'}`}
-                                    variant={tier.highlighted ? 'default' : 'outline'}
+                                    className={`w-full h-16 sm:h-20 rounded-2xl sm:rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl transition-all hover:scale-[1.02] active:scale-95 ${tier.highlighted ? 'bg-primary hover:bg-primary-hover shadow-primary/20' : 'bg-foreground text-background hover:opacity-90'}`}
                                 >
                                     {tier.cta}
                                 </Button>

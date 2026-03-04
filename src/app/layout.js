@@ -11,6 +11,8 @@ const outfit = Outfit({
   variable: '--font-outfit',
 });
 
+import { ThemeProvider } from "@/components/ThemeProvider";
+
 export const metadata = {
   title: "AskMyData | AI-Powered Data Analytics",
   description: "Talk to your data, build dashboards, and collaborate with your team for free.",
@@ -18,9 +20,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${outfit.variable} font-sans`}>
-        {children}
+    <html lang="en" className="dark">
+      <body className={`${inter.variable} ${outfit.variable} font-sans transition-colors duration-300`}>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
