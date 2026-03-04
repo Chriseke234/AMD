@@ -146,9 +146,12 @@ export default function DatasetsPage() {
                                         >
                                             <Trash2 className="w-5 h-5" />
                                         </button>
-                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground/40 group-hover:text-primary group-hover:bg-primary/20 transition-all">
+                                        <button
+                                            onClick={() => router.push(`/app/datasets/${ds.id}`)}
+                                            className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground/40 group-hover:text-primary group-hover:bg-primary/20 transition-all"
+                                        >
                                             <ChevronRight className="w-5 h-5" />
-                                        </div>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
