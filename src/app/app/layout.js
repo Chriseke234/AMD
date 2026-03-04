@@ -6,8 +6,13 @@ export default function AppLayout({ children }) {
             <Sidebar />
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 <header className="h-20 border-b border-border/50 bg-background/80 backdrop-blur-xl lg:hidden flex items-center px-8 z-40">
-                    <div className="font-black text-2xl text-foreground tracking-tighter italic">
-                        AskMyData<span className="text-primary not-italic">.</span>
+                    <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary text-white font-black text-lg">
+                            A
+                        </div>
+                        <div className="hidden sm:block font-black text-2xl text-foreground tracking-tighter">
+                            AskMyData<span className="text-primary">.</span>
+                        </div>
                     </div>
                 </header>
                 <main className="flex-1 overflow-x-hidden overflow-y-auto p-6 lg:p-12 relative">

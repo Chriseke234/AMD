@@ -81,8 +81,8 @@ export default function PublicDashboardPage({ params: paramsPromise }) {
                             <Layers className="w-5 h-5" />
                             <span className="text-[10px] font-black uppercase tracking-[0.4em]">Public Intelligence Node</span>
                         </div>
-                        <h1 className="text-4xl sm:text-6xl font-black tracking-tighter italic">{dashboard.name}<span className="text-primary not-italic">.</span></h1>
-                        <p className="text-white/20 text-xs font-bold uppercase tracking-widest italic">Shared via AskMyData Protocol</p>
+                        <h1 className="text-4xl sm:text-6xl font-black tracking-tighter">{dashboard.name}<span className="text-primary">.</span></h1>
+                        <p className="text-white/20 text-xs font-bold uppercase tracking-widest">Shared via AskMyData Protocol</p>
                     </div>
                     <div className="px-6 py-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center space-x-3">
                         <Database className="w-4 h-4 text-primary" />
@@ -99,7 +99,7 @@ export default function PublicDashboardPage({ params: paramsPromise }) {
                                     <TrendingUp className="w-3 h-3 mr-2" />
                                     Insight Widget
                                 </span>
-                                <h3 className="text-lg font-black italic">{w.title}</h3>
+                                <h3 className="text-lg font-black">{w.title}</h3>
                             </div>
                             <div className="flex-1 min-h-0 relative z-10">
                                 {renderChart(w)}

@@ -14,8 +14,8 @@ export function Footer() {
                             <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary text-white font-black text-2xl shadow-2xl shadow-primary/40 transition-all group-hover:scale-110 group-hover:rotate-3">
                                 A
                             </div>
-                            <span className="text-3xl font-black tracking-tighter text-foreground italic">
-                                AskMyData<span className="text-primary not-italic">.</span>
+                            <span className="text-3xl font-black tracking-tighter text-foreground">
+                                AskMyData<span className="text-primary">.</span>
                             </span>
                         </Link>
                         <p className="text-muted-foreground text-lg leading-relaxed mb-10 font-medium opacity-60">
@@ -31,8 +31,8 @@ export function Footer() {
                     </div>
 
                     <div>
-                        <h4 className="text-[10px] font-black text-primary mb-8 uppercase tracking-[0.4em] italic">Standard Solutions</h4>
-                        <ul className="space-y-4 text-base text-muted-foreground font-medium italic">
+                        <h4 className="text-[10px] font-black text-primary mb-8 uppercase tracking-[0.4em]">Standard Solutions</h4>
+                        <ul className="space-y-4 text-base text-muted-foreground font-medium">
                             <li><a href="#features" className="hover:text-white transition-colors opacity-60 hover:opacity-100">Neural Engine</a></li>
                             <li><a href="#solutions" className="hover:text-white transition-colors opacity-60 hover:opacity-100">Live Synthesis</a></li>
                             <li><Link href="#" className="hover:text-white transition-colors opacity-60 hover:opacity-100">Ecosystem Sync</Link></li>
@@ -40,8 +40,8 @@ export function Footer() {
                     </div>
 
                     <div>
-                        <h4 className="text-[10px] font-black text-primary mb-8 uppercase tracking-[0.4em] italic">Intelligence Hub</h4>
-                        <ul className="space-y-4 text-base text-muted-foreground font-medium italic">
+                        <h4 className="text-[10px] font-black text-primary mb-8 uppercase tracking-[0.4em]">Intelligence Hub</h4>
+                        <ul className="space-y-4 text-base text-muted-foreground font-medium">
                             <li><Link href="#" className="hover:text-white transition-colors opacity-60 hover:opacity-100">Governance</Link></li>
                             <li><Link href="#" className="hover:text-white transition-colors opacity-60 hover:opacity-100">Whitepaper</Link></li>
                             <li><Link href="#" className="hover:text-white transition-colors opacity-60 hover:opacity-100">API Protocol</Link></li>
@@ -49,7 +49,7 @@ export function Footer() {
                     </div>
 
                     <div className="glass-premium p-8 rounded-[2rem] border-white/10">
-                        <h4 className="text-[10px] font-black text-foreground mb-6 uppercase tracking-[0.4em] italic">Stay Synced</h4>
+                        <h4 className="text-[10px] font-black text-foreground mb-6 uppercase tracking-[0.4em]">Stay Synced</h4>
                         <p className="text-xs text-muted-foreground mb-6 font-medium opacity-60">Join the elite intelligence network.</p>
                         <div className="relative group">
                             <input
@@ -64,7 +64,7 @@ export function Footer() {
                     </div>
                 </div>
 
-                <div className="pt-12 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-8 text-[11px] text-muted-foreground uppercase font-black tracking-[0.3em] italic">
+                <div className="pt-12 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-8 text-[11px] text-muted-foreground uppercase font-black tracking-[0.3em]">
                     <p className="opacity-40">© 2026 AskMyData Systems. Orchestrating the future.</p>
                     <div className="flex space-x-10">
                         <Link href="#" className="hover:text-primary transition-colors opacity-40 hover:opacity-100">Privacy</Link>

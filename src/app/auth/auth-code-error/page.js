@@ -13,7 +13,7 @@ export default function AuthCodeError() {
                 </div>
 
                 <div className="space-y-3">
-                    <h1 className="text-3xl font-black tracking-tighter italic">Authentication <span className="text-destructive">Error.</span></h1>
+                    <h1 className="text-3xl font-black tracking-tighter">Authentication <span className="text-destructive">Error.</span></h1>
                     <p className="text-muted-foreground text-lg font-medium">
                         The authentication link was invalid, expired, or has already been used.
                     </p>

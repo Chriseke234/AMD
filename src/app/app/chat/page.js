@@ -294,7 +294,7 @@ export default function AnalyticsChat() {
                                 <span className="text-xs font-black text-primary">{entry.value.toLocaleString()}</span>
                             </div>
                         ))}
-                        <div className="mt-3 pt-3 border-t border-border flex items-center text-[9px] font-black text-primary/60 uppercase italic">
+                        <div className="mt-3 pt-3 border-t border-border flex items-center text-[9px] font-black text-primary/60 uppercase">
                             <Sparkles className="w-2.5 h-2.5 mr-1.5" /> {isForecastPoint ? 'Predicted Confidence High' : 'Neural Insight Active'}
                         </div>
                     </div>
@@ -443,8 +443,8 @@ export default function AnalyticsChat() {
                         <History className="w-6 h-6" />
                     </button>
                     <div>
-                        <h2 className="font-black text-lg sm:text-2xl tracking-tighter text-foreground font-heading italic">
-                            Neural Assistant<span className="text-primary not-italic">.</span>
+                        <h2 className="font-black text-lg sm:text-2xl tracking-tighter text-foreground font-heading">
+                            Neural Assistant<span className="text-primary">.</span>
                         </h2>
                         <div className="flex items-center text-[9px] font-black uppercase tracking-[0.2em] text-green-500/80">
                             <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2 shadow-lg shadow-green-500/50" />
@@ -559,7 +559,7 @@ export default function AnalyticsChat() {
                                             <Card className="p-5 sm:p-10 border-border bg-card/40 backdrop-blur-xl shadow-2xl rounded-[2rem] sm:rounded-[3rem] overflow-hidden group relative">
                                                 <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
                                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 relative z-10">
-                                                    <h4 className="font-black text-base sm:text-lg flex items-center text-foreground font-heading italic">
+                                                    <h4 className="font-black text-base sm:text-lg flex items-center text-foreground font-heading">
                                                         <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 flex items-center justify-center mr-3 sm:mr-4 group-hover:scale-110 transition-transform">
                                                             {msg.chartType === 'pie' ? <PieChartIcon className="w-5 h-5 text-primary" /> : <BarChart3 className="w-5 h-5 text-primary" />}
                                                         </div>
@@ -677,7 +677,7 @@ export default function AnalyticsChat() {
                     <Card className="w-full max-w-md p-8 sm:p-10 border-border bg-card animate-fade-in shadow-3xl rounded-[2.5rem] sm:rounded-[3rem] relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent" />
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-black text-foreground tracking-tighter italic font-heading">Pin Node<span className="text-primary not-italic">.</span></h2>
+                            <h2 className="text-2xl font-black text-foreground tracking-tighter font-heading">Pin Node<span className="text-primary">.</span></h2>
                             <Button variant="ghost" size="icon" className="rounded-full hover:bg-muted text-muted-foreground" onClick={() => setIsSaveModalOpen(false)}>
                                 <X className="w-5 h-5" />
                             </Button>

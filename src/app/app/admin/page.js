@@ -47,8 +47,8 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto space-y-8 animation-fade-in p-8">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tighter italic flex items-center">
-                        <ShieldCheck className="w-10 h-10 mr-4 text-primary" /> SYSTEM CONTROL
+                    <h1 className="text-4xl font-black tracking-tighter flex items-center">
+                        <Activity className="w-10 h-10 mr-4 text-primary" /> ADMIN COMMAND
                     </h1>
                     <p className="text-[var(--muted-foreground)] font-medium">Real-time platform oversight & unit economics</p>
                 </div>
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
                             <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-widest">{m.title}</span>
                         </div>
                         <div className="flex items-end justify-between">
-                            <h3 className="text-3xl font-black italic">{m.value}</h3>
+                            <h3 className="text-3xl font-black">{m.value}</h3>
                             <div className={`flex items-center text-xs font-bold ${m.trend.startsWith('+') ? 'text-emerald-500' : 'text-red-500'}`}>
                                 {m.trend.startsWith('+') ? <ArrowUpRight className="w-3 h-3 mr-1" /> : <ArrowDownRight className="w-3 h-3 mr-1" />}
                                 {m.trend}
@@ -92,7 +92,7 @@ export default function AdminDashboard() {
                 <Card className="lg:col-span-8 p-8 relative overflow-hidden">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="text-xl font-bold italic">Platform Growth</h3>
+                            <h3 className="text-xl font-bold">Platform Growth</h3>
                             <p className="text-sm text-[var(--muted-foreground)]">30-day activity trend</p>
                         </div>
                         <div className="flex bg-[var(--muted)]/30 p-1 rounded-lg">
@@ -128,7 +128,7 @@ export default function AdminDashboard() {
 
                 {/* System Health */}
                 <Card className="lg:col-span-4 p-8">
-                    <h3 className="text-xl font-bold italic mb-6">Service Health</h3>
+                    <h3 className="text-xl font-bold mb-6">Service Health</h3>
                     <div className="space-y-6">
                         {[
                             { name: "API Gateway", status: "Operational", color: "bg-emerald-500" },

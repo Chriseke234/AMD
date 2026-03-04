@@ -92,8 +92,8 @@ export default function DashboardsPage() {
                             <Sparkles className="w-3.5 h-3.5 mr-2" />
                             Live Analytics
                         </div>
-                        <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-foreground italic leading-tight">
-                            Your <span className="text-primary not-italic">Dashboards.</span>
+                        <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-foreground leading-tight">
+                            Your <span className="text-primary">Dashboards.</span>
                         </h1>
                         <p className="text-muted-foreground text-lg font-medium max-w-md leading-relaxed">
                             Curate, analyze, and scale your insights in high-fidelity workspaces.
@@ -147,7 +147,7 @@ export default function DashboardsPage() {
                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[2rem] bg-muted text-muted-foreground flex items-center justify-center mb-8 shadow-2xl transition-transform group-hover:scale-110 group-hover:rotate-12 duration-700">
                             <Layout className="w-10 h-10 sm:w-12 sm:h-12" />
                         </div>
-                        <h3 className="text-2xl sm:text-3xl font-black tracking-tighter mb-4 italic">No deployments found.</h3>
+                        <h3 className="text-2xl sm:text-3xl font-black tracking-tighter mb-4">No deployments found.</h3>
                         <p className="text-muted-foreground max-w-sm mb-10 text-base sm:text-lg font-medium leading-relaxed">
                             Initialize your first high-fidelity dashboard to start orchestrating your data insights.
                         </p>
@@ -174,10 +174,10 @@ export default function DashboardsPage() {
                                         <Trash2 className="w-5 h-5" />
                                     </button>
                                 </div>
-                                <h3 className="text-2xl font-black tracking-tighter text-foreground mb-4 group-hover:text-primary transition-colors italic leading-tight truncate">{dashboard.name}</h3>
+                                <h3 className="text-2xl font-black tracking-tighter text-foreground mb-4 group-hover:text-primary transition-colors leading-tight truncate">{dashboard.name}</h3>
 
                                 <div className="flex flex-wrap items-center gap-4 text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
-                                    <span className="flex items-center px-3 py-1.5 rounded-full bg-muted border border-border italic">
+                                    <span className="flex items-center px-3 py-1.5 rounded-full bg-muted border border-border">
                                         <Calendar className="w-3 h-3 mr-2 text-primary" />
                                         {new Date(dashboard.created_at).toLocaleDateString()}
                                     </span>

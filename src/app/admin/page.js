@@ -36,7 +36,7 @@ export default function AdminDashboard() {
                         <CardTitle className="text-lg font-bold">Query Execution Performance</CardTitle>
                     </CardHeader>
                     <CardContent className="flex items-center justify-center p-12">
-                        <div className="w-full h-48 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 italic">
+                        <div className="w-full h-48 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400">
                             Interactive Performance Chart Visualization
                         </div>
                     </CardContent>

@@ -114,7 +114,7 @@ export default function CanvasPage() {
                                     </div>
                                 </div>
 
-                                <h3 className="text-xl font-black italic mb-6 truncate">{widget.title}</h3>
+                                <h3 className="text-xl font-black mb-6 truncate">{widget.title}</h3>
 
                                 <div className="h-40 w-full bg-white/[0.02] border border-white/5 rounded-3xl flex items-center justify-center mb-6 overflow-hidden">
                                     <div className="w-full h-full opacity-40 blur-sm bg-gradient-to-br from-primary/20 to-transparent" />
@@ -123,7 +123,7 @@ export default function CanvasPage() {
 
                                 <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-[0.2em] text-white/20">
                                     <span>Intelligence Active</span>
-                                    <span className="text-primary italic">Neuro-Rendered</span>
+                                    <span className="text-primary">Neuro-Rendered</span>
                                 </div>
                             </Card>
                         ))

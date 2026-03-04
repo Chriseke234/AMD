@@ -41,8 +41,8 @@ export default async function DashboardPage() {
                 <div className="inline-flex items-center px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] border rounded-full bg-primary/5 text-primary border-primary/20 w-fit">
                     Neural Engine Online
                 </div>
-                <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground font-heading italic">
-                    Neural Control Center<span className="text-primary not-italic">.</span>
+                <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground font-heading">
+                    Neural Control Center<span className="text-primary">.</span>
                 </h1>
                 <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed font-medium">
                     Monitor your neural data infrastructure and AI intelligence metrics in real-time.
@@ -92,7 +92,7 @@ export default async function DashboardPage() {
                 ) : (
                     <Card className="min-h-[350px] p-8 sm:p-10 bg-card border-border hover:border-primary/20 transition-all rounded-[2.5rem] relative overflow-hidden">
                         <div className="relative z-10">
-                            <h3 className="text-xl font-black mb-6 italic">Neural Inventory</h3>
+                            <h3 className="text-xl font-black mb-6">Neural Inventory</h3>
                             <div className="space-y-4">
                                 {datasets.slice(0, 3).map((ds, i) => (
                                     <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-muted/30 border border-border">

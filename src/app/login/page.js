@@ -58,8 +58,8 @@ export default function LoginPage() {
                             <Sparkles className="w-4 h-4 mr-2" />
                             Intelligence 2.0
                         </div>
-                        <h2 className="text-5xl xl:text-7xl font-black text-foreground leading-[0.95] tracking-tighter italic">
-                            Data that <br /> <span className="text-primary not-italic">speaks.</span>
+                        <h2 className="text-5xl xl:text-7xl font-black text-foreground leading-[0.95] tracking-tighter">
+                            Data that <br /> <span className="text-primary">speaks.</span>
                         </h2>
                         <p className="text-lg text-muted-foreground font-medium max-w-sm leading-relaxed">
                             Professional analytics for teams that demand clarity. Access your neural intelligence dashboard.
@@ -103,7 +103,7 @@ export default function LoginPage() {
                     </div>
 
                     <div className="space-y-3">
-                        <h1 className="text-4xl sm:text-5xl font-black tracking-tighter italic text-foreground">Welcome <span className="text-primary tracking-tighter not-italic">Back.</span></h1>
+                        <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground">Welcome <span className="text-primary tracking-tighter">Back.</span></h1>
                         <p className="text-muted-foreground text-lg font-medium">Continue your data strategy session.</p>
                     </div>
 

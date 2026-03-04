@@ -58,8 +58,8 @@ export default function DatasetsPage() {
                     <div className="inline-flex items-center px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] border rounded-full bg-primary/5 text-primary border-primary/20 w-fit">
                         Neural Sources
                     </div>
-                    <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground font-heading italic">
-                        Your Datasets<span className="text-primary not-italic">.</span>
+                    <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground font-heading">
+                        Your Datasets<span className="text-primary">.</span>
                     </h1>
                     <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed font-medium">
                         Manage and explore your neural data sources and intelligence nodes.

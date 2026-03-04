@@ -38,8 +38,8 @@ export function Sidebar() {
                     <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-white font-black text-xl shadow-xl shadow-primary/20 group-hover:scale-110 transition-transform">
                         A
                     </div>
-                    <span className="text-2xl font-black tracking-tighter text-foreground font-heading italic">
-                        AskMyData<span className="text-primary not-italic">.</span>
+                    <span className="text-2xl font-black tracking-tighter text-foreground font-heading">
+                        AskMyData<span className="text-primary">.</span>
                     </span>
                 </Link>
             </div>

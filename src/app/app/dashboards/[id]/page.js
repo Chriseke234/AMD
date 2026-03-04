@@ -169,7 +169,7 @@ export default function DashboardDetailPage({ params }) {
                             <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(124,58,237,0.8)]" />
                             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">System Workspace Active</span>
                         </div>
-                        <h1 className="text-4xl lg:text-5xl font-black tracking-tighter text-white italic">{dashboard.name}</h1>
+                        <h1 className="text-4xl lg:text-5xl font-black tracking-tighter text-white">{dashboard.name}</h1>
                         <div className="flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-white/20">
                             <Calendar className="w-3 h-3 mr-2" />
                             Deployed: {new Date(dashboard.created_at).toLocaleDateString()}
@@ -199,7 +199,7 @@ export default function DashboardDetailPage({ params }) {
                         <div className="w-24 h-24 rounded-[2.5rem] bg-primary/10 text-primary flex items-center justify-center mb-10 shadow-3xl shadow-primary/20 transition-transform group-hover:scale-110 group-hover:rotate-12 duration-700">
                             <Sparkles className="w-12 h-12" />
                         </div>
-                        <h3 className="text-3xl font-black tracking-tighter mb-4 italic text-white">Neural Workspace Empty.</h3>
+                        <h3 className="text-3xl font-black tracking-tighter mb-4 text-white">Neural Workspace Empty.</h3>
                         <p className="text-white/30 max-w-sm mb-12 text-lg font-medium leading-relaxed">
                             Interact with the AI Analytics Chat to pin insights and build your operational intelligence.
                         </p>
@@ -227,7 +227,7 @@ export default function DashboardDetailPage({ params }) {
                                         <TrendingUp className="w-3 h-3 mr-2" />
                                         Insight Engine
                                     </div>
-                                    <h3 className="font-black text-lg text-white italic tracking-tight truncate pr-4">{widget.title}</h3>
+                                    <h3 className="font-black text-lg text-white tracking-tight truncate pr-4">{widget.title}</h3>
                                 </div>
                                 <div className="flex items-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 group-hover:translate-x-0">
                                     <Button
@@ -257,7 +257,7 @@ export default function DashboardDetailPage({ params }) {
                             </div>
                             <div className="mt-6 pt-6 border-t border-white/5 text-[9px] font-black uppercase tracking-[0.4em] text-white/10 flex items-center justify-between relative z-10">
                                 <span>Buffer: Verified</span>
-                                <span className="text-primary/40 italic">Live Sync Active</span>
+                                <span className="text-primary/40">Live Sync Active</span>
                             </div>
                         </Card>
                     ))}

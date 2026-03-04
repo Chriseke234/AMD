@@ -89,8 +89,8 @@ export default function Home() {
       <section className="py-24 border-y border-white/5 relative bg-secondary/20 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-[0.05] pointer-events-none" />
         <div className="container px-6 mx-auto relative z-10">
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground/40 mb-16 text-center animate-fade-in italic">
-            Orchestrating Intelligence for Global Systems
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground/40 mb-16 text-center animate-fade-in">
+            A New Standard for Data Teams
           </p>
           <div className="relative flex overflow-x-hidden">
             <div className="flex animate-marquee whitespace-nowrap gap-20 items-center opacity-20 grayscale hover:grayscale-0 transition-all duration-1000">
@@ -112,11 +112,11 @@ export default function Home() {
               <Cpu className="w-4 h-4 mr-2" />
               Intelligence Core
             </div>
-            <h2 className="text-5xl sm:text-8xl font-black mb-10 tracking-tighter leading-[0.9] italic">
-              Built for <span className="text-primary not-italic">Scale.</span> <br />Design for <span className="relative inline-block">Clarity.<div className="absolute -bottom-2 left-0 w-full h-2 bg-primary/20 -rotate-2" /></span>
+            <h2 className="text-5xl sm:text-8xl font-black mb-10 tracking-tighter leading-[0.9]">
+              Built for <span className="text-primary">Scale.</span> <br />Design for <span className="relative inline-block">Clarity.<div className="absolute -bottom-2 left-0 w-full h-2 bg-primary/20 -rotate-2" /></span>
             </h2>
             <p className="text-lg sm:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto opacity-60 leading-relaxed">
-              AskMyData melds high-fidelity AI with production-grade infrastructure for the ultimate strategic experience.
+              Powerful analytics meets production infrastructure.
             </p>
           </div>
 
@@ -134,11 +134,11 @@ export default function Home() {
                   <div className="w-20 h-20 rounded-[2.2rem] bg-secondary flex items-center justify-center mb-10 border border-white/5 group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-[0_20px_40px_rgba(124,58,237,0.3)] transition-all duration-700 shadow-2xl">
                     <f.icon className="w-10 h-10 text-primary" />
                   </div>
-                  <h3 className="text-2xl sm:text-3xl font-black italic tracking-tighter mb-6 uppercase text-foreground leading-none">{f.title}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black tracking-tighter mb-6 uppercase text-foreground leading-none">{f.title}</h3>
                   <p className="text-muted-foreground text-lg sm:text-xl leading-relaxed font-medium opacity-60 group-hover:opacity-100 transition-opacity duration-500">{f.description}</p>
                 </div>
                 <div className="mt-12 flex items-center text-[10px] font-black uppercase tracking-[0.3em] text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-700">
-                  <span>Learn Protocol</span>
+                  <span>Explore Features</span>
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </div>
               </div>
@@ -157,8 +157,8 @@ export default function Home() {
                 <Fingerprint className="w-4 h-4 mr-2" />
                 The Protocol
               </div>
-              <h2 className="text-5xl sm:text-7xl font-black tracking-tighter leading-[0.9] italic">
-                Advanced <br /> <span className="text-white not-italic">Encryption Layer.</span>
+              <h2 className="text-5xl sm:text-7xl font-black tracking-tighter leading-[0.9]">
+                Advanced <br /> <span className="text-white">Encryption Layer.</span>
               </h2>
               <div className="space-y-8 max-w-xl">
                 <div className="flex gap-6">
@@ -166,8 +166,8 @@ export default function Home() {
                     <Shield className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-black uppercase tracking-tight mb-2 italic">Zero Knowledge Base</h4>
-                    <p className="text-muted-foreground leading-relaxed font-medium opacity-70 italic">Your data source remains isolated. We only process intelligence, never store records.</p>
+                    <h4 className="text-xl font-black uppercase tracking-tight mb-2">Zero Knowledge Base</h4>
+                    <p className="text-muted-foreground leading-relaxed font-medium opacity-70">Your data source remains isolated. We only process intelligence, never store records.</p>
                   </div>
                 </div>
                 <div className="flex gap-6">
@@ -175,8 +175,8 @@ export default function Home() {
                     <Layers className="w-6 h-6 text-purple-400" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-black uppercase tracking-tight mb-2 italic">Neural Orchestration</h4>
-                    <p className="text-muted-foreground leading-relaxed font-medium opacity-70 italic">Dynamic routing across specialized LLM clusters ensures the highest reasoning fidelity.</p>
+                    <h4 className="text-xl font-black uppercase tracking-tight mb-2">Neural Orchestration</h4>
+                    <p className="text-muted-foreground leading-relaxed font-medium opacity-70">Dynamic routing across specialized LLM clusters ensures the highest reasoning fidelity.</p>
                   </div>
                 </div>
               </div>
@@ -194,7 +194,7 @@ export default function Home() {
                 <div className="relative h-full flex items-center justify-center border border-white/10 rounded-[3.8rem] overflow-hidden">
                   <div className="text-center space-y-6">
                     <Network className="w-32 h-32 text-white/10 mx-auto animate-pulse" />
-                    <div className="text-white/20 font-black italic uppercase tracking-[1em] text-[10px]">Neural Matrix v4.1</div>
+                    <div className="text-white/20 font-black uppercase tracking-[1em] text-[10px]">Neural Matrix v4.1</div>
                   </div>
                 </div>
               </div>

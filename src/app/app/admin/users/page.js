@@ -58,7 +58,7 @@ export default function UserManagementPage() {
         <div className="max-w-7xl mx-auto space-y-8 animation-fade-in p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tighter italic flex items-center">
+                    <h1 className="text-3xl font-black tracking-tighter flex items-center">
                         <ShieldAlert className="w-8 h-8 mr-4 text-primary" /> USER INTEL
                     </h1>
                     <p className="text-[var(--muted-foreground)] font-medium">Platform identity & access control</p>
@@ -105,8 +105,8 @@ export default function UserManagementPage() {
                                 </td>
                                 <td className="px-6 py-5">
                                     <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${user.role === 'super-admin' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' :
-                                            user.role === 'admin' ? 'bg-amber-500 text-white' :
-                                                'bg-blue-500/10 text-blue-600 border border-blue-500/20'
+                                        user.role === 'admin' ? 'bg-amber-500 text-white' :
+                                            'bg-blue-500/10 text-blue-600 border border-blue-500/20'
                                         }`}>
                                         {user.role}
                                     </span>

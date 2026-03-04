@@ -266,8 +266,8 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                             <Database className="w-7 h-7 sm:w-8 sm:h-8" />
                         </div>
                         <div>
-                            <h1 className="text-2xl sm:text-4xl font-black tracking-tighter italic font-heading">
-                                {dataset.name}<span className="text-primary not-italic">.</span>
+                            <h1 className="text-2xl sm:text-4xl font-black tracking-tighter font-heading">
+                                {dataset.name}<span className="text-primary">.</span>
                             </h1>
                             <p className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mt-1">
                                 Registry Node: <span className="text-foreground/60">{id.slice(0, 8)}</span>
@@ -302,7 +302,7 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                                     <Skeleton className="h-4 w-[70%]" />
                                 </div>
                             ) : (
-                                <p className="text-sm sm:text-base font-medium text-foreground/80 leading-relaxed italic">
+                                <p className="text-sm sm:text-base font-medium text-foreground/80 leading-relaxed">
                                     "{narrative}"
                                 </p>
                             )}
@@ -480,7 +480,7 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                                     <Layers className="w-5 h-5" />
                                 </div>
                                 <div className="min-w-0">
-                                    <h3 className="text-base sm:text-lg font-black tracking-tight italic truncate">Live Registry Preview</h3>
+                                    <h3 className="text-base sm:text-lg font-black tracking-tight truncate">Live Registry Preview</h3>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Top {previewData.length} instances visible</p>
                                 </div>
                             </div>
@@ -533,7 +533,7 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                                             {columns.map(col => (
                                                 <td key={col.id} className="px-4 sm:px-6 py-4 text-xs sm:text-sm font-medium text-foreground/80 whitespace-nowrap">
                                                     {row[col.name] === null ? (
-                                                        <span className="text-[10px] bg-red-500/5 text-red-400 px-2 py-0.5 rounded italic">NULL</span>
+                                                        <span className="text-[10px] bg-red-500/5 text-red-400 px-2 py-0.5 rounded">NULL</span>
                                                     ) : (
                                                         String(row[col.name])
                                                     )}

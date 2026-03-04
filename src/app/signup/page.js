@@ -55,8 +55,8 @@ export default function SignupPage() {
                             <Sparkles className="w-4 h-4 mr-2" />
                             Elite Infrastructure
                         </div>
-                        <h2 className="text-6xl font-black text-white leading-[0.9] tracking-tighter italic">
-                            Experience <br /> pure <span className="text-primary tracking-tighter not-italic">Intelligence.</span>
+                        <h2 className="text-6xl font-black text-white leading-[0.9] tracking-tighter">
+                            Experience <br /> pure <span className="text-primary tracking-tighter">Intelligence.</span>
                         </h2>
                         <p className="text-xl text-white/50 font-medium max-w-md leading-relaxed">
                             Unlock the full potential of your datasets with our multi-model AI orchestration engine.
@@ -90,7 +90,7 @@ export default function SignupPage() {
                 <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_bottom_right,rgba(124,58,237,0.03),transparent_40%)] pointer-events-none" />
                 <div className="w-full max-w-xl space-y-12 animation-fade-up relative z-10">
                     <div className="space-y-4">
-                        <h1 className="text-5xl font-black tracking-tighter italic">Create <span className="text-primary tracking-tighter">Account.</span></h1>
+                        <h1 className="text-5xl font-black tracking-tighter">Create <span className="text-primary tracking-tighter">Account.</span></h1>
                         <p className="text-muted-foreground text-xl font-medium">Join the next generation of data-driven leaders.</p>
                     </div>
 
@@ -151,7 +151,7 @@ export default function SignupPage() {
                             <span className="w-full border-t border-border/50" />
                         </div>
                         <div className="relative flex justify-center text-[10px] uppercase font-black tracking-[0.4em]">
-                            <span className="bg-background px-6 text-muted-foreground/40 leading-none italic flex items-center">
+                            <span className="bg-background px-6 text-muted-foreground/40 leading-none flex items-center">
                                 <ShieldCheck className="w-3 h-3 mr-2" />
                                 Secure Registration Protocol
                             </span>

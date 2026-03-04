@@ -42,7 +42,7 @@ export default function SentryPage() {
                         <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-glow-primary" />
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">Neural Sentry Protocol Active</span>
                     </div>
-                    <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-white italic">Registry Sentry<span className="text-primary not-italic">.</span></h1>
+                    <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-white">Registry Sentry<span className="text-primary">.</span></h1>
                     <p className="text-white/30 text-xs font-bold uppercase tracking-widest max-w-md">Proactive Data Monitoring & Real-time Anomaly Detection Hub.</p>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -62,7 +62,7 @@ export default function SentryPage() {
                         <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center mb-8 border border-primary/20">
                             <Shield className="w-10 h-10 text-primary" />
                         </div>
-                        <h3 className="text-2xl font-black italic mb-4">No Sentry Entities Bound</h3>
+                        <h3 className="text-2xl font-black mb-4">No Sentry Entities Bound</h3>
                         <p className="text-white/20 text-sm font-medium mb-10 max-w-xs text-center leading-relaxed">Bind AI-driven watchers to your datasets from any insight card or chat session.</p>
                         <Button className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-primary/20">Init Sentry Protocol</Button>
                     </Card>
@@ -81,7 +81,7 @@ export default function SentryPage() {
                             <div className="space-y-4 relative z-10">
                                 <div className="space-y-1">
                                     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/60">{alert.datasets?.name || 'Dataset'}</span>
-                                    <h3 className="text-xl font-black italic truncate">{alert.title}</h3>
+                                    <h3 className="text-xl font-black truncate">{alert.title}</h3>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 space-y-2">
                                     <div className="flex items-center justify-between">
@@ -95,7 +95,7 @@ export default function SentryPage() {
                             </div>
                             <div className="mt-8 pt-8 border-t border-white/5 flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-white/20">
                                 <span className="flex items-center"><Bell className="w-3 h-3 mr-2" /> Real-time Enabled</span>
-                                <span className="text-primary italic">Status: Monitoring</span>
+                                <span className="text-primary">Status: Monitoring</span>
                             </div>
                         </Card>
                     ))

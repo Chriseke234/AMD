@@ -172,17 +172,17 @@ export default function TeamsPage() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                         <div className="p-6 rounded-2xl bg-[var(--muted)]/20 border border-border/50">
                                             <p className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-widest mb-1">Total Members</p>
-                                            <h4 className="text-3xl font-black italic">{activeTeam.team_members?.length || 1}</h4>
+                                            <h4 className="text-3xl font-black">{activeTeam.team_members?.length || 1}</h4>
                                         </div>
                                         <div className="p-6 rounded-2xl bg-[var(--muted)]/20 border border-border/50">
                                             <p className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-widest mb-1">Role</p>
-                                            <h4 className="text-3xl font-black italic text-primary">Admin</h4>
+                                            <h4 className="text-3xl font-black text-primary">Admin</h4>
                                         </div>
                                     </div>
 
                                     <div className="space-y-6">
                                         <div className="flex items-center justify-between">
-                                            <h3 className="text-xl font-bold italic">Members</h3>
+                                            <h3 className="text-xl font-bold">Members</h3>
                                             <form onSubmit={handleInvite} className="flex items-center space-x-2">
                                                 <Input
                                                     placeholder="Invite via email..."
@@ -203,7 +203,7 @@ export default function TeamsPage() {
                                                     <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-purple-400 border-2 border-white shadow-sm" />
                                                     <div>
                                                         <p className="font-bold text-sm">You (Owner)</p>
-                                                        <p className="text-xs text-[var(--muted-foreground)] italic">Full administrative control</p>
+                                                        <p className="text-xs text-[var(--muted-foreground)]">Full administrative control</p>
                                                     </div>
                                                 </div>
                                                 <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-primary/10 text-primary rounded-lg border border-primary/20">Admin</span>

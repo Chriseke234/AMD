@@ -33,9 +33,11 @@ export default function DashboardBuilder() {
                         <ChevronLeft className="w-3 h-3 mr-2 group-hover:-translate-x-1 transition-transform" />
                         Back to Systems
                     </Link>
-                    <h2 className="text-2xl font-black italic tracking-tighter text-white flex items-center">
-                        <Boxes className="w-6 h-6 mr-3 text-primary" />
-                        Component <span className="text-primary ml-2 not-italic underline decoration-primary/30 underline-offset-4">Library.</span>
+                    <h2 className="text-2xl font-black tracking-tighter text-white flex items-center">
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mr-4">
+                            <Plus className="w-6 h-6 text-primary" />
+                        </div>
+                        Component <span className="text-primary ml-2 underline decoration-primary/30 underline-offset-4">Library.</span>
                     </h2>
                     <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.3em]">Orchestrate your workspace</p>
                 </div>
@@ -112,7 +114,7 @@ export default function DashboardBuilder() {
                         </div>
                         <div>
                             <div className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20">Operational Workspace</div>
-                            <div className="text-lg font-black text-white italic tracking-tight">Untitled_Workspace_01</div>
+                            <div className="text-lg font-black text-white tracking-tight">Untitled_Workspace_01</div>
                         </div>
                     </div>
                     <div className="flex items-center space-x-4 px-2">
@@ -139,7 +141,7 @@ export default function DashboardBuilder() {
                                 <div className="absolute inset-0 bg-primary/20 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                                 <Layout className="w-14 h-14 text-white/10 group-hover:text-primary transition-colors duration-700 relative z-10" />
                             </div>
-                            <h2 className="text-4xl font-black tracking-tighter mb-6 text-white italic">Design your <span className="text-primary not-italic">Intelligence.</span></h2>
+                            <h2 className="text-4xl font-black tracking-tighter mb-6 text-white">Design your <span className="text-primary">Intelligence.</span></h2>
                             <p className="text-white/30 max-w-sm text-lg font-medium leading-relaxed">
                                 Deploy components from the library to build your custom operational interface.
                             </p>
@@ -172,7 +174,7 @@ export default function DashboardBuilder() {
                                             <Sparkles className="w-6 h-6 text-primary animate-pulse" />
                                         </div>
                                         <div className="space-y-2 text-center">
-                                            <div className="text-sm font-black text-white italic tracking-tight">{w.title}</div>
+                                            <div className="text-sm font-black text-white tracking-tight">{w.title}</div>
                                             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20">Operational Neural Preview</div>
                                         </div>
                                     </CardContent>

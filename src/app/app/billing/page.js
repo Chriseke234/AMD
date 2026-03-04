@@ -93,7 +93,7 @@ export default function BillingPage() {
     return (
         <div className="max-w-6xl mx-auto space-y-12 animation-fade-in p-8">
             <div className="text-center space-y-4">
-                <h1 className="text-4xl font-black tracking-tighter italic flex items-center justify-center uppercase">
+                <h1 className="text-4xl font-black tracking-tighter flex items-center justify-center uppercase">
                     <CreditCard className="w-10 h-10 mr-4 text-primary" /> Plans & Billing
                 </h1>
                 <p className="text-[var(--muted-foreground)] text-lg max-w-2xl mx-auto">
@@ -113,7 +113,7 @@ export default function BillingPage() {
                         </div>
                         <div>
                             <p className="text-xs font-bold text-primary uppercase tracking-widest mb-1">Current Active Plan</p>
-                            <h2 className="text-3xl font-black italic uppercase">{subscription?.plan_tier || 'Free'} Edition</h2>
+                            <h2 className="text-3xl font-black uppercase">{subscription?.plan_tier || 'Free'} Edition</h2>
                             <p className="text-[var(--muted-foreground)] text-sm mt-1">Status: <span className="text-emerald-500 font-bold uppercase">{subscription?.status || 'Active'}</span></p>
                         </div>
                     </div>
@@ -133,7 +133,7 @@ export default function BillingPage() {
                             </div>
                         )}
                         <div className="mb-8">
-                            <h3 className={`text-xl font-bold italic mb-2 ${tier.color}`}>{tier.name}</h3>
+                            <h3 className={`text-xl font-bold mb-2 ${tier.color}`}>{tier.name}</h3>
                             <div className="flex items-baseline space-x-1">
                                 <span className="text-4xl font-black tracking-tighter">{tier.price}</span>
                                 {tier.price !== "Custom" && <span className="text-[var(--muted-foreground)] text-sm font-bold">/mo</span>}
@@ -167,7 +167,7 @@ export default function BillingPage() {
             {/* Usage Summary Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <Card className="p-8">
-                    <h3 className="text-xl font-bold italic mb-6 flex items-center">
+                    <h3 className="text-xl font-bold mb-6 flex items-center">
                         <Database className="w-5 h-5 mr-3 text-primary" /> Resource Usage
                     </h3>
                     <div className="space-y-6">
@@ -195,7 +195,7 @@ export default function BillingPage() {
                 <Card className="p-8 bg-slate-900 text-white border-none relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent pointer-events-none" />
                     <div className="relative z-10">
-                        <h3 className="text-xl font-bold italic mb-4 flex items-center">
+                        <h3 className="text-xl font-bold mb-4 flex items-center">
                             <Shield className="w-5 h-5 mr-3 text-primary" /> Enterprise Identity
                         </h3>
                         <p className="text-sm text-slate-400 mb-6 leading-relaxed">

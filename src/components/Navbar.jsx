@@ -25,9 +25,9 @@ export function Navbar() {
                     <div className="flex items-center justify-center w-11 h-11 rounded-2xl bg-primary text-white font-black text-xl shadow-2xl shadow-primary/40 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                         A
                     </div>
-                    <div className="flex flex-col">
+                    <div className="hidden sm:flex flex-col">
                         <span className="text-2xl font-black tracking-tighter text-foreground leading-none">
-                            AskMyData<span className="text-primary italic">.</span>
+                            AskMyData<span className="text-primary">.</span>
                         </span>
                         <span className="text-[8px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 leading-none mt-1">Intelligence OS</span>
                     </div>
@@ -83,7 +83,7 @@ export function Navbar() {
                                 key={item}
                                 href={`#${item.toLowerCase()}`}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="text-xl font-black italic tracking-tighter text-foreground hover:text-primary transition-all"
+                                className="text-xl font-black tracking-tighter text-foreground hover:text-primary transition-all"
                             >
                                 {item}
                             </a>

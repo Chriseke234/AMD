@@ -20,16 +20,15 @@ export function Hero() {
                         Next-Gen Intelligence OS
                     </div>
 
-                    <h1 className="mb-8 text-5xl sm:text-8xl lg:text-9xl font-black tracking-[calc(-0.05em)] leading-[0.85] text-balance animate-fade-in font-heading italic">
-                        The Data <br className="hidden sm:block" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-tr from-primary via-purple-400 to-indigo-500 not-italic px-4 drop-shadow-sm">
-                            Singularity.
+                    <h1 className="mb-8 text-5xl sm:text-8xl lg:text-9xl font-black tracking-[calc(-0.05em)] leading-[0.85] text-balance animate-fade-in font-heading">
+                        Deep Data <br className="hidden sm:block" />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-tr from-primary via-purple-400 to-indigo-500 px-4 drop-shadow-sm">
+                            Simplified.
                         </span>
                     </h1>
 
                     <p className="mb-14 text-lg sm:text-2xl text-muted-foreground font-medium max-w-3xl opacity-70 animate-fade-in leading-relaxed" style={{ animationDelay: '0.1s' }}>
-                        Connect your ecosystems. Orchestrate neural data flows. <br className="hidden md:block" />
-                        Build the future of <span className="text-foreground font-black underline decoration-primary/40 underline-offset-8">autonomous analytics</span> today.
+                        The intelligent data layer for modern teams. Transform complex datasets into actionable strategy with one simple protocol.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full sm:w-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
