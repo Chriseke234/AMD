@@ -19,7 +19,7 @@ export function Pricing() {
         },
         {
             name: "Pro",
-            price: "49",
+            price: "15",
             description: "The complete toolkit for data professionals.",
             features: [
                 "Unlimited Datasets",

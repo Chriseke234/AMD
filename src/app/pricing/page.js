@@ -16,7 +16,7 @@ export default function PricingPage() {
         },
         {
             name: "Pro",
-            price: "29",
+            price: "15",
             symbol: "$",
             description: "Powerful features for growing teams.",
             features: ["Unlimited Datasets", "Predictive Analytics", "Custom Dashboards", "Up to 5 Team members", "Priority Support"],
