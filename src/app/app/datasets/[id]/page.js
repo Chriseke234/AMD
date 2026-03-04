@@ -182,46 +182,18 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
     )
 
     return (
-        <div className="space-y-10 animate-fade-in pb-20 max-w-[1600px] mx-auto">
+        <div className="space-y-6 sm:space-y-10 animate-fade-in pb-20 max-w-[1600px] mx-auto px-4 sm:px-0">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8">
                 <div className="space-y-4">
                     <button
                         onClick={() => router.push('/app/datasets')}
-                        className="flex items-center text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors mb-4 group"
+                        className="flex items-center text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors mb-2 sm:mb-4 group"
                     >
                         <ChevronLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                         Back to Inventory
                     </button>
                     <div className="flex items-center space-x-4">
-                        <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-lg shadow-primary/10">
-                            <Database className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground italic">
-                                {dataset.name}<span className="text-primary not-italic">.</span>
-                            </h1>
-                            <p className="text-muted-foreground font-medium uppercase text-[10px] tracking-[0.4em] mt-2">
-                                Neural Data Node | {dataset.table_name}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-4">
-                    <div className="px-6 py-4 rounded-2xl bg-card border border-border flex items-center space-x-4 shadow-sm">
-                        <Table className="w-5 h-5 text-primary" />
-                        <div>
-                            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Entities</div>
-                            <div className="text-xl font-black">{dataset.row_count.toLocaleString()}</div>
-                        </div>
-                    </div>
-                    <div className="px-6 py-4 rounded-2xl bg-card border border-border flex items-center space-x-4 shadow-sm">
-                        <Sparkles className="w-5 h-5 text-amber-400" />
-                        <div>
-                            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Integrity</div>
-                            <div className="text-xl font-black text-amber-400">{dataset.health_score}%</div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -378,16 +350,15 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                     </div>
                 </div>
 
-                {/* Data Preview */}
                 <div className="lg:col-span-3 space-y-6">
                     <Card className="rounded-[2.5rem] bg-card border-border shadow-2xl overflow-hidden flex flex-col h-full max-h-[700px]">
-                        <div className="p-8 border-b border-border bg-muted/10 flex items-center justify-between shrink-0">
+                        <div className="p-6 sm:p-8 border-b border-border bg-muted/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 shrink-0">
                             <div className="flex items-center space-x-4">
-                                <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                                <div className="p-2.5 rounded-xl bg-primary/10 text-primary shrink-0">
                                     <Layers className="w-5 h-5" />
                                 </div>
-                                <div>
-                                    <h3 className="text-lg font-black tracking-tight italic">Live Registry Preview</h3>
+                                <div className="min-w-0">
+                                    <h3 className="text-base sm:text-lg font-black tracking-tight italic truncate">Live Registry Preview</h3>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Top {previewData.length} instances visible</p>
                                 </div>
                             </div>
@@ -395,7 +366,7 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="h-9 rounded-xl text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-muted transition-all"
+                                    className="flex-1 sm:flex-none h-9 rounded-xl text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-muted transition-all"
                                     onClick={() => handleExport('csv')}
                                 >
                                     Export CSV
@@ -403,26 +374,28 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="h-9 rounded-xl text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-muted transition-all"
+                                    className="flex-1 sm:flex-none h-9 rounded-xl text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-muted transition-all"
                                     onClick={() => handleExport('json')}
                                 >
                                     Export JSON
                                 </Button>
                             </div>
                             {cleaning && (
-                                <div className="flex items-center space-x-3 text-primary animate-pulse">
+                                <div className="flex items-center space-x-3 text-primary animate-pulse min-w-fit">
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">Processing Changes...</span>
                                 </div>
                             )}
                         </div>
 
-                        <div className="flex-1 overflow-auto">
+                        <div className="flex-1 overflow-auto relative">
+                            {/* Mobile Scroll Indicator */}
+                            <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none lg:hidden opacity-50" />
                             <table className="w-full border-collapse">
                                 <thead className="sticky top-0 z-20 bg-muted/80 backdrop-blur-md">
                                     <tr>
                                         {columns.map(col => (
-                                            <th key={col.id} className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground border-b border-border">
+                                            <th key={col.id} className="px-4 sm:px-6 py-4 sm:py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground border-b border-border whitespace-nowrap">
                                                 <div className="flex items-center space-x-2">
                                                     {getTypeIcon(col.data_type)}
                                                     <span>{col.name}</span>
@@ -436,7 +409,7 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                                     {previewData.map((row, i) => (
                                         <tr key={i} className="hover:bg-primary/[0.02] transition-colors group">
                                             {columns.map(col => (
-                                                <td key={col.id} className="px-6 py-4 text-sm font-medium text-foreground/80 whitespace-nowrap">
+                                                <td key={col.id} className="px-4 sm:px-6 py-4 text-xs sm:text-sm font-medium text-foreground/80 whitespace-nowrap">
                                                     {row[col.name] === null ? (
                                                         <span className="text-[10px] bg-red-500/5 text-red-400 px-2 py-0.5 rounded italic">NULL</span>
                                                     ) : (

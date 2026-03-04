@@ -121,19 +121,19 @@ export function Sidebar() {
             <div className="lg:hidden">
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="fixed top-5 left-6 z-[60] p-2.5 rounded-xl bg-card border border-border shadow-lg"
+                    className="fixed top-4 left-4 z-[40] p-3 rounded-2xl bg-card/80 backdrop-blur-xl border border-border shadow-2xl transition-all active:scale-90"
                 >
-                    <Menu className="w-5 h-5 text-foreground" />
+                    <Menu className="w-5 h-5 text-primary" />
                 </button>
 
                 {isOpen && (
                     <div className="fixed inset-0 z-[100] flex">
-                        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
-                        <div className="relative w-72 h-full animate-in slide-in-from-left duration-300">
+                        <div className="fixed inset-0 bg-background/60 backdrop-blur-md" onClick={() => setIsOpen(false)} />
+                        <div className="relative w-72 h-full animate-in slide-in-from-left duration-300 shadow-2xl">
                             <NavContent />
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="absolute top-5 right-[-50px] p-2.5 rounded-xl bg-card border border-border shadow-lg"
+                                className="absolute top-6 right-[-60px] p-3 rounded-2xl bg-card border border-border shadow-2xl active:scale-95 transition-all"
                             >
                                 <X className="w-5 h-5 text-foreground" />
                             </button>

@@ -49,7 +49,7 @@ export default async function DashboardPage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {stats.map((stat, i) => (
                     <Card key={i} className="group hover:border-primary/30 hover:scale-[1.02] hover:-rotate-1 transition-all duration-500 bg-card border-border overflow-hidden relative rounded-[2rem] shadow-sm hover:shadow-2xl hover:shadow-primary/5">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-[40px] rounded-full" />

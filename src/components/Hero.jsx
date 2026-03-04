@@ -20,14 +20,14 @@ export function Hero() {
                         Intelligence 2.0 Released
                     </div>
 
-                    <h1 className="mb-8 text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-balance animate-fade-in">
-                        Data That <br />
+                    <h1 className="mb-6 text-4xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-balance animate-fade-in">
+                        Data That <br className="hidden sm:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-indigo-600 italic px-2">
                             Understands.
                         </span>
                     </h1>
 
-                    <p className="mb-12 text-lg sm:text-xl text-muted-foreground font-medium max-w-2xl opacity-80 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                    <p className="mb-10 text-base sm:text-xl text-muted-foreground font-medium max-w-2xl opacity-80 animate-fade-in" style={{ animationDelay: '0.1s' }}>
                         The most intuitive AI interface to analyze and visualize your business logic.
                         Professional-grade insights, <span className="text-foreground font-bold">zero learning curve.</span>
                     </p>

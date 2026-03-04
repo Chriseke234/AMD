@@ -458,13 +458,13 @@ export default function AnalyticsChat() {
                 )}
 
                 {/* Chat Messages */}
-                <div className="flex-1 p-6 sm:p-10 overflow-y-auto space-y-8 bg-gradient-to-b from-transparent to-secondary/20 scroll-smooth relative">
+                <div className="flex-1 p-4 sm:p-10 overflow-y-auto space-y-6 sm:space-y-8 bg-gradient-to-b from-transparent to-secondary/20 scroll-smooth relative">
                     {messages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
-                            <div className={`max-w-[90%] sm:max-w-[80%] ${msg.role === 'user' ? 'bg-primary text-white rounded-[2rem] rounded-tr-none px-6 sm:px-8 py-4 sm:py-5 shadow-xl shadow-primary/20 text-sm sm:text-base font-medium' : 'w-full space-y-6'}`}>
+                            <div className={`max-w-[95%] sm:max-w-[80%] ${msg.role === 'user' ? 'bg-primary text-white rounded-[1.8rem] rounded-tr-none px-5 sm:px-8 py-3 sm:py-5 shadow-xl shadow-primary/20 text-sm sm:text-base font-medium' : 'w-full space-y-4 sm:space-y-6'}`}>
                                 {msg.role === 'ai' ? (
-                                    <div className="space-y-6">
-                                        <div className={`rounded-[2rem] rounded-tl-none p-6 sm:p-8 border backdrop-blur-md relative overflow-hidden ${msg.type === 'error' ? 'bg-red-500/5 text-red-500 border-red-500/20' : 'bg-card/50 border-border shadow-lg'}`}>
+                                    <div className="space-y-4 sm:space-y-6">
+                                        <div className={`rounded-[1.8rem] rounded-tl-none p-5 sm:p-8 border backdrop-blur-md relative overflow-hidden ${msg.type === 'error' ? 'bg-red-500/5 text-red-500 border-red-500/20' : 'bg-card/50 border-border shadow-lg'}`}>
                                             <div className="absolute top-0 left-0 w-1 h-full bg-primary/20" />
                                             <p className="text-foreground/90 leading-relaxed text-sm sm:text-base font-medium">{msg.content}</p>
                                             {msg.sql && (
@@ -482,31 +482,31 @@ export default function AnalyticsChat() {
                                         </div>
 
                                         {msg.type === 'analysis' && msg.results?.length > 0 && (
-                                            <Card className="p-6 sm:p-10 border-border bg-card/40 backdrop-blur-xl shadow-2xl rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden group relative">
+                                            <Card className="p-5 sm:p-10 border-border bg-card/40 backdrop-blur-xl shadow-2xl rounded-[2rem] sm:rounded-[3rem] overflow-hidden group relative">
                                                 <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
-                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 relative z-10">
-                                                    <h4 className="font-black text-lg flex items-center text-foreground font-heading italic">
-                                                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 relative z-10">
+                                                    <h4 className="font-black text-base sm:text-lg flex items-center text-foreground font-heading italic">
+                                                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 flex items-center justify-center mr-3 sm:mr-4 group-hover:scale-110 transition-transform">
                                                             {msg.chartType === 'pie' ? <PieChartIcon className="w-5 h-5 text-primary" /> : <BarChart3 className="w-5 h-5 text-primary" />}
                                                         </div>
-                                                        {msg.title || "Intelligence Render"}
+                                                        <span className="truncate">{msg.title || "Intelligence Render"}</span>
                                                     </h4>
                                                     <div className="flex items-center space-x-2">
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-9 rounded-full px-4 text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-primary hover:text-white transition-all"
+                                                            className="flex-1 sm:flex-none h-8 sm:h-9 rounded-full px-3 sm:px-4 text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-primary hover:text-white transition-all"
                                                             onClick={() => {
                                                                 setSavingWidget(msg)
                                                                 setIsSaveModalOpen(true)
                                                             }}
                                                         >
-                                                            <Pin className="w-3.5 h-3.5 mr-2" /> Pin
+                                                            <Pin className="w-3.5 h-3.5 mr-1.5 sm:mr-2" /> Pin
                                                         </Button>
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-9 rounded-full px-4 text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-muted transition-all"
+                                                            className="flex-1 sm:flex-none h-8 sm:h-9 rounded-full px-3 sm:px-4 text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-muted transition-all"
                                                             onClick={() => {
                                                                 const keys = Object.keys(msg.metadata.results[0]);
                                                                 const csv = [
@@ -521,7 +521,7 @@ export default function AnalyticsChat() {
                                                                 a.click();
                                                             }}
                                                         >
-                                                            <Download className="w-3.5 h-3.5 mr-2" /> Export CSV
+                                                            <Download className="w-3.5 h-3.5 mr-1.5 sm:mr-2" /> Export
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -539,7 +539,7 @@ export default function AnalyticsChat() {
                     ))}
                     {loading && (
                         <div className="flex justify-start animate-pulse">
-                            <div className="rounded-full px-6 py-4 bg-muted/50 border border-border flex items-center space-x-3">
+                            <div className="rounded-full px-5 py-3 bg-muted/50 border border-border flex items-center space-x-3">
                                 <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Synthesizing...</span>
                             </div>
                         </div>
@@ -548,12 +548,12 @@ export default function AnalyticsChat() {
                 </div>
 
                 {messages[messages.length - 1]?.role === 'ai' && messages[messages.length - 1]?.suggestedQuestions?.length > 0 && !loading && (
-                    <div className="px-6 sm:px-10 pb-6 flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-3 duration-700 relative z-30">
+                    <div className="px-4 sm:px-10 pb-4 sm:pb-6 flex flex-wrap gap-2 sm:gap-3 animate-in fade-in slide-in-from-bottom-3 duration-700 relative z-30">
                         {messages[messages.length - 1].suggestedQuestions.map((q, i) => (
                             <button
                                 key={i}
                                 onClick={() => handleSend(null, q)}
-                                className="bg-card border border-border px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-white transition-all hover:-translate-y-1 shadow-sm hover:shadow-xl hover:shadow-primary/20"
+                                className="bg-card border border-border px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-white transition-all hover:-translate-y-1 shadow-sm hover:shadow-xl hover:shadow-primary/20"
                             >
                                 {q}
                             </button>
@@ -562,12 +562,12 @@ export default function AnalyticsChat() {
                 )}
             </div>
 
-            <footer className="p-4 sm:p-8 bg-background/80 backdrop-blur-3xl border-t border-border relative z-20">
+            <footer className="p-3 sm:p-8 bg-background/80 backdrop-blur-3xl border-t border-border relative z-20">
                 <form onSubmit={handleSend} className="relative max-w-5xl mx-auto flex items-center">
                     <div className="relative flex-1 group">
                         <Input
-                            className="pr-14 pl-6 sm:pl-10 py-8 sm:py-10 text-lg sm:text-xl rounded-[1.5rem] sm:rounded-[2.5rem] border-border bg-secondary/50 focus:border-primary/50 focus:ring-primary/20 transition-all font-medium"
-                            placeholder={selectedIds.length > 0 ? "Ask a question..." : "Select datasets to begin..."}
+                            className="pr-12 pl-5 sm:pl-10 py-7 sm:py-10 text-base sm:text-xl rounded-2xl sm:rounded-[2.5rem] border-border bg-secondary/50 focus:border-primary/50 focus:ring-primary/20 transition-all font-medium"
+                            placeholder={selectedIds.length > 0 ? "Ask a question..." : "Select datasets..."}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             disabled={selectedIds.length === 0}
@@ -575,9 +575,9 @@ export default function AnalyticsChat() {
                         <button
                             type="submit"
                             disabled={!input.trim() || loading || selectedIds.length === 0}
-                            className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/30 disabled:opacity-20 disabled:shadow-none"
+                            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-primary text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/30 disabled:opacity-20 disabled:shadow-none"
                         >
-                            <Send className="w-6 h-6 sm:w-7 sm:h-7" />
+                            <Send className="w-5 h-5 sm:w-7 sm:h-7" />
                         </button>
                     </div>
                 </form>
