@@ -75,7 +75,7 @@ export function Hero() {
                         <div className="relative mx-auto rounded-[3rem] sm:rounded-[4.5rem] border-[12px] border-background glass p-3 sm:p-5 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden max-w-6xl group bg-black">
                             <div className="aspect-[16/10] w-full rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden relative border border-white/10">
                                 <img
-                                    src="/brain/f039823c-dfe2-4207-bf2c-40e0522d1558/premium_dashboard_preview_1772612529490.png"
+                                    src="/premium-dashboard.png"
                                     alt="AskMyData Intelligence OS"
                                     className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-[3s] ease-out"
                                 />
