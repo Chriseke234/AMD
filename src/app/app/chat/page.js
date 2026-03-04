@@ -15,6 +15,7 @@ import {
     LineChart, Line, PieChart, Pie, Cell, Legend
 } from 'recharts'
 import { useTheme } from "@/components/ThemeProvider"
+import { Skeleton } from "@/components/ui/Skeleton"
 
 export default function AnalyticsChat() {
     const { theme } = useTheme()
@@ -257,11 +258,24 @@ export default function AnalyticsChat() {
                                 <YAxis fontSize={10} tickLine={false} axisLine={false} stroke={textColor} />
                                 <Tooltip
                                     cursor={{ fill: 'var(--primary)', opacity: 0.1 }}
-                                    contentStyle={{
-                                        borderRadius: '16px',
-                                        border: '1px solid var(--border)',
-                                        backgroundColor: 'var(--card)',
-                                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)'
+                                    content={({ active, payload, label }) => {
+                                        if (active && payload && payload.length) {
+                                            return (
+                                                <div className="bg-card border border-border p-4 rounded-2xl shadow-2xl backdrop-blur-xl animate-in zoom-in-95 duration-200">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">{label}</p>
+                                                    {payload.map((entry, i) => (
+                                                        <div key={i} className="flex items-center justify-between space-x-4">
+                                                            <span className="text-xs font-bold text-foreground">{entry.name}:</span>
+                                                            <span className="text-xs font-black text-primary">{entry.value.toLocaleString()}</span>
+                                                        </div>
+                                                    ))}
+                                                    <div className="mt-3 pt-3 border-t border-border flex items-center text-[9px] font-black text-primary/60 uppercase italic">
+                                                        <Sparkles className="w-2.5 h-2.5 mr-1.5" /> Neural Insight Active
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        return null
                                     }}
                                 />
                                 {yKeys.map((key, i) => (
@@ -538,9 +552,15 @@ export default function AnalyticsChat() {
                         </div>
                     ))}
                     {loading && (
-                        <div className="flex justify-start animate-pulse">
-                            <div className="rounded-full px-5 py-3 bg-muted/50 border border-border flex items-center space-x-3">
-                                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Synthesizing...</span>
+                        <div className="flex justify-start animate-fade-in">
+                            <div className="rounded-[1.8rem] rounded-tl-none p-5 sm:p-8 border border-border bg-card/50 backdrop-blur-md w-full max-w-[70%] space-y-4">
+                                <div className="flex items-center space-x-2 mb-2">
+                                    <Loader2 className="w-3 h-3 text-primary animate-spin" />
+                                    <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Neural Synthesis In Progress</span>
+                                </div>
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-[90%]" />
+                                <Skeleton className="h-4 w-[70%]" />
                             </div>
                         </div>
                     )}

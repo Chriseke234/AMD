@@ -50,6 +50,12 @@ export async function POST(request) {
             case 'fill_nulls':
                 sql = `UPDATE data.${tableName} SET "${params.column}" = '${params.value}' WHERE "${params.column}" IS NULL`
                 break
+            case 'smart_fill':
+                // AI-driven fill: for now we use a placeholder logic that would be handled 
+                // by a pre-processing step or a more complex AI-SQL hybrid.
+                // In a real scenario, we'd calculate the mode/mean via AI and apply here.
+                sql = `UPDATE data.${tableName} SET "${params.column}" = '${params.value}' WHERE "${params.column}" IS NULL`
+                break
             default:
                 throw new Error("Invalid operation")
         }

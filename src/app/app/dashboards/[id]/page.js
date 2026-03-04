@@ -4,9 +4,10 @@ import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/Button"
 import { Card } from "@/components/ui/Card"
-import { Layout, ArrowLeft, ChevronLeft, Share2, Plus, Loader2, Trash2, Maximize2, Sparkles, TrendingUp, Calendar, Zap } from "lucide-react"
+import { Layout, ArrowLeft, ChevronLeft, Share2, Plus, Loader2, Trash2, Maximize2, Sparkles, TrendingUp, Calendar, Zap, Camera, MessageSquarePlus } from "lucide-react"
 import Link from "next/link"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from 'recharts'
+import html2canvas from 'html2canvas'
 
 export default function DashboardDetailPage({ params }) {
     const [dashboard, setDashboard] = useState(null)
@@ -46,6 +47,38 @@ export default function DashboardDetailPage({ params }) {
     const removeWidget = async (id) => {
         const { error } = await supabase.from('dashboard_widgets').delete().eq('id', id)
         if (!error) setWidgets(widgets.filter(w => w.id !== id))
+    }
+
+    const handleShare = async () => {
+        try {
+            const res = await fetch('/api/dashboards/share', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dashboardId: params.id })
+            })
+            const data = await res.json()
+            if (data.shareUrl) {
+                navigator.clipboard.writeText(data.shareUrl)
+                alert("Public Link Copied to Clipboard!")
+            }
+        } catch (err) {
+            alert("Sharing failed")
+        }
+    }
+
+    const exportWidget = async (id) => {
+        const element = document.getElementById(`widget-${id}`)
+        if (!element) return
+
+        const canvas = await html2canvas(element, {
+            backgroundColor: '#0a0a0b',
+            scale: 2
+        })
+        const image = canvas.toDataURL("image/png")
+        const link = document.createElement('a')
+        link.href = image
+        link.download = `insight-${id}.png`
+        link.click()
     }
 
     const renderChart = (widget) => {
@@ -144,8 +177,12 @@ export default function DashboardDetailPage({ params }) {
                     </div>
                 </div>
                 <div className="flex items-center space-x-4 bg-white/[0.03] p-2 rounded-2xl border border-white/5 backdrop-blur-xl shadow-2xl">
-                    <Button variant="ghost" className="h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] text-white/40 hover:text-white hover:bg-white/5">
-                        <Share2 className="w-4 h-4 mr-2" /> Share
+                    <Button
+                        variant="ghost"
+                        onClick={handleShare}
+                        className="h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] text-white/40 hover:text-white hover:bg-white/5"
+                    >
+                        <Share2 className="w-4 h-4 mr-2" /> Share Hub
                     </Button>
                     <Link href="/app/chat">
                         <Button className="h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary/20">
@@ -178,6 +215,7 @@ export default function DashboardDetailPage({ params }) {
                     {widgets.map(widget => (
                         <Card
                             key={widget.id}
+                            id={`widget-${widget.id}`}
                             style={{ gridColumn: `span ${widget.position.w || 6}`, gridRow: `span ${widget.position.h ? Math.ceil(widget.position.h / 4) : 1}` }}
                             className="p-8 flex flex-col group overflow-hidden bg-[#0a0a0b] border-white/5 hover:border-primary/20 transition-all duration-500 rounded-[2.5rem] shadow-2xl relative"
                         >
@@ -192,6 +230,15 @@ export default function DashboardDetailPage({ params }) {
                                     <h3 className="font-black text-lg text-white italic tracking-tight truncate pr-4">{widget.title}</h3>
                                 </div>
                                 <div className="flex items-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 group-hover:translate-x-0">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-10 w-10 text-white/20 hover:text-primary hover:bg-primary/10 rounded-xl"
+                                        onClick={() => exportWidget(widget.id)}
+                                        title="Snapshot PNG"
+                                    >
+                                        <Camera className="w-4 h-4" />
+                                    </Button>
                                     <Button
                                         variant="ghost"
                                         size="icon"

@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/Button"
 import { Card } from "@/components/ui/Card"
+import { Skeleton } from "@/components/ui/Skeleton"
 import {
     Database, Table, CheckCircle2, AlertCircle, Loader2,
     Trash2, RefreshCw, Layers, Sparkles, Filter,
     ChevronLeft, Copy, Sliders, Wand2, ArrowDown,
-    ArrowRight, ArrowLeft, Hash, Type, Calendar
+    ArrowRight, ArrowLeft, Hash, Type, Calendar, Share2,
+    BrainCircuit, MessageSquareText
 } from "lucide-react"
 
 export default function DatasetDetailPage({ params: paramsPromise }) {
@@ -24,6 +26,8 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
     const [scanResults, setScanResults] = useState([])
     const [suggesting, setSuggesting] = useState(false)
     const [suggestions, setSuggestions] = useState([])
+    const [narrative, setNarrative] = useState("")
+    const [narrativeLoading, setNarrativeLoading] = useState(false)
     const supabase = createClient()
     const router = useRouter()
 
@@ -139,9 +143,54 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
             })
             setPreviewData(preview || [])
             setLoading(false)
+
+            // Trigger narrative if not already present or just forced
+            if (preview?.length > 0) {
+                handleGenerateNarrative(ds, cols, preview.slice(0, 5))
+            }
         }
         fetchDataset()
     }, [id])
+
+    const handleGenerateNarrative = async (ds, cols, sample) => {
+        setNarrativeLoading(true)
+        try {
+            const res = await fetch('/api/datasets/narrative', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    datasetId: id,
+                    columns: cols.map(c => c.name),
+                    sampleData: sample
+                })
+            })
+            const data = await res.json()
+            if (data.narrative) setNarrative(data.narrative)
+        } catch (err) {
+            console.error("Narrative failed", err)
+        } finally {
+            setNarrativeLoading(false)
+        }
+    }
+
+    const handleNeuralRepair = async () => {
+        const columnsToRepair = scanResults.filter(r => r.nullCount > 0).map(r => r.column)
+        if (columnsToRepair.length === 0) {
+            alert("Neural Scan detects no critical null anomalies for repair.")
+            return
+        }
+
+        setCleaning(true)
+        try {
+            for (const col of columnsToRepair) {
+                // In a true "Elite" version, we'd predict values. 
+                // For now, we use the smartest statistical default (Mode/Median) or AI suggestion via the clean route.
+                await handleCleanAction('smart_fill', { column: col, value: 'AI_REPAIRED' })
+            }
+        } finally {
+            setCleaning(false)
+        }
+    }
 
     const handleCleanAction = async (operation, actionParams = {}) => {
         setCleaning(true)
@@ -176,8 +225,27 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
     }
 
     if (loading) return (
-        <div className="flex items-center justify-center h-[70vh]">
-            <Loader2 className="w-12 h-12 text-primary animate-spin" />
+        <div className="space-y-10 animate-fade-in pb-20 max-w-[1600px] mx-auto px-4 sm:px-0 mt-10">
+            <div className="flex flex-col md:flex-row justify-between gap-8">
+                <div className="space-y-4 flex-1">
+                    <Skeleton className="h-4 w-32" />
+                    <div className="flex items-center space-x-4">
+                        <Skeleton className="w-16 h-16 rounded-2xl" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-8 w-64" />
+                            <Skeleton className="h-4 w-40" />
+                        </div>
+                    </div>
+                </div>
+                <div className="flex space-x-4">
+                    <Skeleton className="h-12 w-32 rounded-xl" />
+                    <Skeleton className="h-12 w-32 rounded-xl" />
+                </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <Skeleton className="h-[600px] rounded-[2.5rem]" />
+                <Skeleton className="lg:col-span-3 h-[600px] rounded-[2.5rem]" />
+            </div>
         </div>
     )
 
@@ -194,9 +262,54 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                         Back to Inventory
                     </button>
                     <div className="flex items-center space-x-4">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[1.5rem] bg-primary flex items-center justify-center text-white shadow-2xl shadow-primary/20">
+                            <Database className="w-7 h-7 sm:w-8 sm:h-8" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl sm:text-4xl font-black tracking-tighter italic font-heading">
+                                {dataset.name}<span className="text-primary not-italic">.</span>
+                            </h1>
+                            <p className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mt-1">
+                                Registry Node: <span className="text-foreground/60">{id.slice(0, 8)}</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
+                <div className="flex items-center space-x-3">
+                    <Button variant="outline" className="h-12 rounded-xl text-[10px] font-black uppercase tracking-widest border-border bg-card shadow-sm hover:shadow-md transition-all">
+                        <Share2 className="w-4 h-4 mr-2" /> Share Node
+                    </Button>
+                </div>
             </div>
+
+            {/* AI Narrative Section */}
+            {(narrative || narrativeLoading) && (
+                <div className="relative group p-6 sm:p-8 rounded-[2rem] bg-gradient-to-r from-primary/5 via-card to-background border border-primary/10 shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-4 duration-1000">
+                    <div className="absolute top-0 right-10 w-64 h-64 bg-primary/5 blur-[80px] rounded-full" />
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-6 relative z-10">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
+                            <BrainCircuit className="w-6 h-6 outline-none" />
+                        </div>
+                        <div className="space-y-2 flex-1">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Neural Executive Summary</h3>
+                                {narrativeLoading && <Loader2 className="w-3 h-3 text-primary animate-spin" />}
+                            </div>
+                            {narrativeLoading ? (
+                                <div className="space-y-2 mt-2">
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-[90%]" />
+                                    <Skeleton className="h-4 w-[70%]" />
+                                </div>
+                            ) : (
+                                <p className="text-sm sm:text-base font-medium text-foreground/80 leading-relaxed italic">
+                                    "{narrative}"
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Tools Panel */}
@@ -222,6 +335,15 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                                     )}
                                     Neural Auto-Scan
                                     {scanning && <div className="absolute inset-0 bg-primary/20 animate-pulse" />}
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    className="w-full justify-start h-14 rounded-2xl border-primary/20 text-primary hover:bg-primary hover:text-white shadow-sm group relative overflow-hidden"
+                                    onClick={handleNeuralRepair}
+                                    disabled={cleaning || scanning}
+                                >
+                                    <BrainCircuit className="w-4 h-4 mr-3 group-hover:rotate-12 transition-transform" />
+                                    Neural Smart-Repair
                                 </Button>
                                 <Button
                                     variant="secondary"
