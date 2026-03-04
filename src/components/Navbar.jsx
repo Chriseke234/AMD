@@ -34,7 +34,6 @@ export function Navbar() {
                 <div className="hidden space-x-8 lg:flex items-center">
                     <a href="#features" className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-all">Features</a>
                     <a href="#solutions" className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-all">Solutions</a>
-                    <a href="#pricing" className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-all">Pricing</a>
                 </div>
 
                 <div className="flex items-center space-x-4">
@@ -67,7 +66,6 @@ export function Navbar() {
                     <div className="flex flex-col space-y-6">
                         <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-foreground hover:text-primary">Features</a>
                         <a href="#solutions" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-foreground hover:text-primary">Solutions</a>
-                        <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-foreground hover:text-primary">Pricing</a>
                     </div>
                     <hr className="border-border" />
                     <div className="flex flex-col space-y-4">

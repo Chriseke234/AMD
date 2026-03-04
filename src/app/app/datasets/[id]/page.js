@@ -8,7 +8,8 @@ import { Card } from "@/components/ui/Card"
 import {
     Database, Table, CheckCircle2, AlertCircle, Loader2,
     Trash2, RefreshCw, Layers, Sparkles, Filter,
-    ChevronLeft, Copy, Sliders, Wand2, ArrowDown
+    ChevronLeft, Copy, Sliders, Wand2, ArrowDown,
+    ArrowRight, ArrowLeft, Hash, Type, Calendar
 } from "lucide-react"
 
 export default function DatasetDetailPage({ params: paramsPromise }) {
@@ -21,8 +22,74 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
     const [cleaning, setCleaning] = useState(false)
     const [scanning, setScanning] = useState(false)
     const [scanResults, setScanResults] = useState([])
+    const [suggesting, setSuggesting] = useState(false)
+    const [suggestions, setSuggestions] = useState([])
     const supabase = createClient()
     const router = useRouter()
+
+    const handleExport = (format) => {
+        let content = ""
+        let filename = `${dataset.name}_export.${format}`
+        let type = "text/plain"
+
+        if (format === 'json') {
+            content = JSON.stringify(previewData, null, 2)
+            type = "application/json"
+        } else {
+            const keys = columns.map(c => c.name)
+            content = [
+                keys.join(','),
+                ...previewData.map(row => keys.map(k => JSON.stringify(row[k])).join(','))
+            ].join('\n')
+            type = "text/csv"
+        }
+
+        const blob = new Blob([content], { type })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = filename
+        a.click()
+    }
+
+    const handleSmartRename = async () => {
+        setSuggesting(true)
+        try {
+            const res = await fetch('/api/datasets/rename-suggest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ datasetId: id, columns: columns.map(c => c.name) })
+            })
+            const data = await res.json()
+            if (data.error) throw new Error(data.error)
+            setSuggestions(data.suggestions)
+        } catch (err) {
+            alert(err.message)
+        } finally {
+            setSuggesting(false)
+        }
+    }
+
+    const applyRename = async (original, suggested) => {
+        setCleaning(true)
+        try {
+            await handleCleanAction('rename_column', { oldName: original, newName: suggested })
+            setSuggestions(prev => prev.filter(s => s.original !== original))
+        } catch (err) {
+            alert(err.message)
+        } finally {
+            setCleaning(false)
+        }
+    }
+
+    const getTypeIcon = (type) => {
+        const t = type?.toLowerCase() || ''
+        if (t.includes('int') || t.includes('num') || t.includes('double')) return <Hash className="w-3 h-3 text-blue-500" />
+        if (t.includes('text') || t.includes('char')) return <Type className="w-3 h-3 text-purple-500" />
+        if (t.includes('time') || t.includes('date')) return <Calendar className="w-3 h-3 text-amber-500" />
+        if (t.includes('bool')) return <CheckCircle2 className="w-3 h-3 text-green-500" />
+        return <Database className="w-3 h-3 text-muted-foreground" />
+    }
 
     const handleNeuralScan = async () => {
         setScanning(true)
@@ -223,16 +290,72 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                         </div>
 
                         <div>
-                            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/60 mb-6 flex items-center">
-                                <Sliders className="w-3 h-3 mr-2 text-primary" />
-                                Column Structuring
+                            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/60 mb-6 flex items-center justify-between">
+                                <div className="flex items-center">
+                                    <Sliders className="w-3 h-3 mr-2 text-primary" />
+                                    Column Structuring
+                                </div>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 rounded-lg text-[9px] font-black uppercase tracking-widest hover:text-primary transition-all"
+                                    onClick={handleSmartRename}
+                                    disabled={suggesting}
+                                >
+                                    {suggesting ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1 text-amber-400" />}
+                                    AI Rename
+                                </Button>
                             </h3>
+
+                            {suggestions.length > 0 && (
+                                <div className="mb-6 p-5 rounded-[2rem] bg-primary/5 border border-primary/10 space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
+                                    <div className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center">
+                                        <Sparkles className="w-3 h-3 mr-2" />
+                                        Neural Suggestions
+                                    </div>
+                                    <div className="space-y-2">
+                                        {suggestions.map((s, i) => (
+                                            <div key={i} className="flex items-center justify-between bg-card p-3 rounded-xl border border-border shadow-sm group/suggestion">
+                                                <div className="min-w-0 pr-2">
+                                                    <div className="text-[10px] font-bold truncate flex items-center text-muted-foreground/40">
+                                                        {s.original}
+                                                    </div>
+                                                    <div className="text-[10px] font-black text-primary truncate">
+                                                        {s.suggested}
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="h-8 px-3 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shrink-0"
+                                                    onClick={() => applyRename(s.original, s.suggested)}
+                                                >
+                                                    Apply
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-muted-foreground transition-all"
+                                        onClick={() => setSuggestions([])}
+                                    >
+                                        Dismiss All
+                                    </Button>
+                                </div>
+                            )}
+
                             <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2">
                                 {columns.map((col) => (
                                     <div key={col.id} className="p-4 rounded-xl bg-muted/30 border border-border flex items-center justify-between group">
-                                        <div className="min-w-0">
-                                            <div className="text-[10px] font-black truncate">{col.name}</div>
-                                            <div className="text-[9px] font-medium text-muted-foreground/60 uppercase">{col.data_type}</div>
+                                        <div className="flex items-center min-w-0 pr-2">
+                                            <div className="mr-3 p-2 rounded-lg bg-background border border-border">
+                                                {getTypeIcon(col.data_type)}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <div className="text-[10px] font-black truncate">{col.name}</div>
+                                                <div className="text-[9px] font-medium text-muted-foreground/60 uppercase">{col.data_type}</div>
+                                            </div>
                                         </div>
                                         <button className="opacity-0 group-hover:opacity-100 p-2 text-muted-foreground hover:text-primary transition-all">
                                             <RefreshCw className="w-3 h-3" />
@@ -268,6 +391,24 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Top {previewData.length} instances visible</p>
                                 </div>
                             </div>
+                            <div className="flex items-center space-x-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-9 rounded-xl text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-muted transition-all"
+                                    onClick={() => handleExport('csv')}
+                                >
+                                    Export CSV
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-9 rounded-xl text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-muted transition-all"
+                                    onClick={() => handleExport('json')}
+                                >
+                                    Export JSON
+                                </Button>
+                            </div>
                             {cleaning && (
                                 <div className="flex items-center space-x-3 text-primary animate-pulse">
                                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -283,6 +424,7 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                                         {columns.map(col => (
                                             <th key={col.id} className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground border-b border-border">
                                                 <div className="flex items-center space-x-2">
+                                                    {getTypeIcon(col.data_type)}
                                                     <span>{col.name}</span>
                                                     <ArrowDown className="w-3 h-3 opacity-20" />
                                                 </div>

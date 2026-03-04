@@ -3,6 +3,7 @@ import { cookies } from "next/headers"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { Button } from "@/components/ui/Button"
 import { Database, BarChart3, TrendingUp, AlertCircle, Sparkles, Layout } from "lucide-react"
+import { NeuralActivityChart, IntegritySparkline } from "@/components/app/NeuralCharts"
 import Link from "next/link"
 
 export default async function DashboardPage() {
@@ -30,18 +31,18 @@ export default async function DashboardPage() {
     const stats = [
         { title: "Datasets", value: datasets?.length || 0, icon: Database, color: "text-blue-500", bg: "bg-blue-500/10" },
         { title: "Dashboards", value: dashboards?.length || 0, icon: Layout, color: "text-primary", bg: "bg-primary/10" },
-        { title: "Intelligence", value: "Active", icon: Sparkles, color: "text-green-500", bg: "bg-green-500/10" },
-        { title: "Avg Integrity", value: `${avgHealth}%`, icon: AlertCircle, color: "text-amber-500", bg: "bg-amber-500/10" },
+        { title: "Neural Load", value: "85%", icon: Sparkles, color: "text-purple-500", bg: "bg-purple-500/10", chart: 'activity' },
+        { title: "Avg Integrity", value: `${avgHealth}%`, icon: AlertCircle, color: "text-amber-500", bg: "bg-amber-500/10", chart: 'sparkline' },
     ]
 
     return (
         <div className="space-y-12 animate-fade-in pb-20">
             <div className="flex flex-col space-y-3">
                 <div className="inline-flex items-center px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] border rounded-full bg-primary/5 text-primary border-primary/20 w-fit">
-                    System Overview
+                    Neural Engine Online
                 </div>
                 <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground font-heading italic">
-                    Dashboard Overview<span className="text-primary not-italic">.</span>
+                    Neural Control Center<span className="text-primary not-italic">.</span>
                 </h1>
                 <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed font-medium">
                     Monitor your neural data infrastructure and AI intelligence metrics in real-time.
@@ -50,8 +51,11 @@ export default async function DashboardPage() {
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {stats.map((stat, i) => (
-                    <Card key={i} className="group hover:border-primary/30 transition-all duration-500 bg-card border-border overflow-hidden relative rounded-[2rem]">
+                    <Card key={i} className="group hover:border-primary/30 hover:scale-[1.02] hover:-rotate-1 transition-all duration-500 bg-card border-border overflow-hidden relative rounded-[2rem] shadow-sm hover:shadow-2xl hover:shadow-primary/5">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-[40px] rounded-full" />
+
+                        {stat.chart === 'sparkline' && <IntegritySparkline />}
+
                         <CardHeader className="flex flex-row items-center justify-between pb-2 relative z-10 p-5 sm:p-6">
                             <CardTitle className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
                                 {stat.title}
@@ -62,6 +66,7 @@ export default async function DashboardPage() {
                         </CardHeader>
                         <CardContent className="relative z-10 p-5 sm:p-6 pt-0">
                             <div className="text-4xl sm:text-5xl font-black text-foreground tracking-tighter">{stat.value}</div>
+                            {stat.chart === 'activity' && <NeuralActivityChart />}
                         </CardContent>
                     </Card>
                 ))}

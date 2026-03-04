@@ -56,7 +56,8 @@ export async function POST(request) {
                 sql: z.string().describe("The SQL SELECT query to execute on the 'data' schema tables."),
                 insight: z.string().describe("A brief, helpful interpretation of the query results."),
                 chartType: z.enum(['bar', 'line', 'pie', 'table']).describe("The best visualization type for this data."),
-                title: z.string().describe("A concise title for the chart/result.")
+                title: z.string().describe("A concise title for the chart/result."),
+                suggestedQuestions: z.array(z.string()).max(3).describe("3 follow-up questions the user might want to ask based on this result.")
             }),
             system: `You are an expert Data Analyst for "AskMyData".
             Your goal is to transform natural language questions into precise SQL SELECT queries.
@@ -100,7 +101,8 @@ export async function POST(request) {
             sql: aiResponse.sql,
             results: results || [],
             chartType: aiResponse.chartType,
-            title: aiResponse.title
+            title: aiResponse.title,
+            suggestedQuestions: aiResponse.suggestedQuestions
         })
 
     } catch (error) {

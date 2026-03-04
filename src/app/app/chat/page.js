@@ -103,9 +103,10 @@ export default function AnalyticsChat() {
 
     useEffect(scrollToBottom, [messages])
 
-    const handleSend = async (e) => {
-        e.preventDefault()
-        if (!input.trim() || loading) return
+    const handleSend = async (e, forcedInput = null) => {
+        if (e) e.preventDefault()
+        const messageText = forcedInput || input
+        if (!messageText.trim() || loading) return
         if (selectedIds.length === 0) {
             alert("Please select at least one dataset first.")
             return
@@ -119,7 +120,7 @@ export default function AnalyticsChat() {
                 .from('chat_threads')
                 .insert({
                     user_id: user.id,
-                    title: input.slice(0, 30) + (input.length > 30 ? '...' : ''),
+                    title: messageText.slice(0, 30) + (messageText.length > 30 ? '...' : ''),
                     dataset_ids: selectedIds
                 })
                 .select()
@@ -129,7 +130,7 @@ export default function AnalyticsChat() {
             setThreads([newThread, ...threads])
         }
 
-        const userMsg = { role: 'user', content: input }
+        const userMsg = { role: 'user', content: messageText }
         setMessages(prev => [...prev, { ...userMsg, id: Date.now() }])
         setInput("")
         setLoading(true)
@@ -138,14 +139,14 @@ export default function AnalyticsChat() {
         await supabase.from('chat_messages').insert({
             thread_id: threadId,
             role: 'user',
-            content: input
+            content: messageText
         })
 
         try {
             const res = await fetch('/api/ai-query', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: input, datasetIds: selectedIds })
+                body: JSON.stringify({ prompt: messageText, datasetIds: selectedIds })
             })
 
             const data = await res.json()
@@ -545,6 +546,20 @@ export default function AnalyticsChat() {
                     )}
                     <div ref={messagesEndRef} />
                 </div>
+
+                {messages[messages.length - 1]?.role === 'ai' && messages[messages.length - 1]?.suggestedQuestions?.length > 0 && !loading && (
+                    <div className="px-6 sm:px-10 pb-6 flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-3 duration-700 relative z-30">
+                        {messages[messages.length - 1].suggestedQuestions.map((q, i) => (
+                            <button
+                                key={i}
+                                onClick={() => handleSend(null, q)}
+                                className="bg-card border border-border px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-white transition-all hover:-translate-y-1 shadow-sm hover:shadow-xl hover:shadow-primary/20"
+                            >
+                                {q}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
             <footer className="p-4 sm:p-8 bg-background/80 backdrop-blur-3xl border-t border-border relative z-20">

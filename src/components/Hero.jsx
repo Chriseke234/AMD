@@ -39,12 +39,6 @@ export function Hero() {
                                 <ArrowRight className="ml-3 w-5 h-5" />
                             </Button>
                         </Link>
-                        <Link href="#pricing" className="w-full sm:w-auto">
-                            <Button variant="outline" size="lg" className="w-full sm:px-10 h-16 sm:h-20 rounded-2xl sm:rounded-3xl text-lg font-black uppercase tracking-widest border-border bg-background/50 backdrop-blur-md hover:bg-muted transition-all">
-                                <Play className="mr-3 w-4 h-4 fill-primary text-primary" />
-                                Pricing
-                            </Button>
-                        </Link>
                     </div>
 
                     {/* Preview Image / Mockup */}

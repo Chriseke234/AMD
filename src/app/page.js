@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
-import { Pricing } from "@/components/Pricing";
 import { Footer } from "@/components/Footer";
 import { Zap, Shield, BarChart3, Users, Globe, Database, Sparkles } from "lucide-react";
 
@@ -117,7 +116,6 @@ export default function Home() {
         </div>
       </section>
 
-      <Pricing />
       <Footer />
     </main>
   );
