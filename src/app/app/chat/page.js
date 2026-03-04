@@ -7,14 +7,13 @@ import { Card } from "@/components/ui/Card"
 import {
     Send, Sparkles, Database, Trash2, Layout as LayoutIcon, Plus, Check, ChevronRight, ChevronDown as ChevronDownIcon, Download, Share2,
     BarChart3, LineChart as LineChartIcon, PieChart as PieChartIcon, Table as TableIcon,
-    Pin, Save, Loader2, X, Info, AlertCircle, Menu
+    Pin, Save, Loader2, X, Info, AlertCircle, Menu, History, MessageSquare, Edit3
 } from "lucide-react"
 import { createClient } from "@/lib/supabase"
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     LineChart, Line, PieChart, Pie, Cell, Legend
 } from 'recharts'
-import Link from "next/link"
 import { useTheme } from "@/components/ThemeProvider"
 
 export default function AnalyticsChat() {
@@ -29,16 +28,19 @@ export default function AnalyticsChat() {
     const [savingWidget, setSavingWidget] = useState(null)
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
+
+    // New Persistence States
+    const [threads, setThreads] = useState([])
+    const [activeThreadId, setActiveThreadId] = useState(null)
+    const [showThreads, setShowThreads] = useState(false)
+
     const messagesEndRef = useRef(null)
     const supabase = createClient()
-
     const COLORS = ['#7c3aed', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e'];
 
     useEffect(() => {
         fetchInitialData()
-        setMessages([
-            { id: 1, role: 'ai', content: "Hello! I'm your AI Data Assistant. Ask me anything about your datasets, e.g., 'Show me the revenue trend for last month.'", type: 'text' }
-        ])
+        fetchThreads()
     }, [])
 
     const fetchInitialData = async () => {
@@ -49,6 +51,50 @@ export default function AnalyticsChat() {
         if (ds?.length > 0 && selectedIds.length === 0) {
             setSelectedIds([ds[0].id])
         }
+    }
+
+    const fetchThreads = async () => {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        const { data: ts } = await supabase
+            .from('chat_threads')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('updated_at', { ascending: false })
+
+        setThreads(ts || [])
+        if (ts?.length > 0 && !activeThreadId) {
+            loadThread(ts[0].id)
+        }
+    }
+
+    const loadThread = async (threadId) => {
+        setActiveThreadId(threadId)
+        setLoading(true)
+        const { data: msgs } = await supabase
+            .from('chat_messages')
+            .select('*')
+            .eq('thread_id', threadId)
+            .order('created_at', { ascending: true })
+
+        if (msgs) {
+            setMessages(msgs.map(m => ({
+                id: m.id,
+                role: m.role,
+                content: m.content,
+                type: m.type,
+                ...m.metadata
+            })))
+        }
+        setLoading(false)
+    }
+
+    const startNewThread = () => {
+        setActiveThreadId(null)
+        setMessages([
+            { id: 'welcome', role: 'ai', content: "Hello! I'm your AI Data Assistant. Ask me anything about your datasets.", type: 'text' }
+        ])
     }
 
     const scrollToBottom = () => {
@@ -65,10 +111,35 @@ export default function AnalyticsChat() {
             return
         }
 
-        const userMsg = { id: Date.now(), role: 'user', content: input }
-        setMessages(prev => [...prev, userMsg])
+        const { data: { user } } = await supabase.auth.getUser()
+
+        let threadId = activeThreadId
+        if (!threadId) {
+            const { data: newThread } = await supabase
+                .from('chat_threads')
+                .insert({
+                    user_id: user.id,
+                    title: input.slice(0, 30) + (input.length > 30 ? '...' : ''),
+                    dataset_ids: selectedIds
+                })
+                .select()
+                .single()
+            threadId = newThread.id
+            setActiveThreadId(threadId)
+            setThreads([newThread, ...threads])
+        }
+
+        const userMsg = { role: 'user', content: input }
+        setMessages(prev => [...prev, { ...userMsg, id: Date.now() }])
         setInput("")
         setLoading(true)
+
+        // Save User Message
+        await supabase.from('chat_messages').insert({
+            thread_id: threadId,
+            role: 'user',
+            content: input
+        })
 
         try {
             const res = await fetch('/api/ai-query', {
@@ -80,25 +151,36 @@ export default function AnalyticsChat() {
             const data = await res.json()
 
             if (data.error) {
-                setMessages(prev => [...prev, {
-                    id: Date.now() + 1,
-                    role: 'ai',
-                    content: data.error,
-                    type: 'error'
-                }])
+                const errorMsg = { role: 'ai', content: data.error, type: 'error' }
+                setMessages(prev => [...prev, { ...errorMsg, id: Date.now() + 1 }])
+                await supabase.from('chat_messages').insert({ thread_id: threadId, ...errorMsg })
             } else {
-                setMessages(prev => [...prev, {
-                    id: Date.now() + 1,
+                const aiMsg = {
                     role: 'ai',
                     content: data.insight,
-                    sql: data.sql,
-                    results: data.results,
-                    chartType: data.chartType,
-                    title: data.title,
                     type: 'analysis',
-                    query: userMsg.content,
-                    chartConfig: data.chartConfig
-                }])
+                    metadata: {
+                        sql: data.sql,
+                        results: data.results,
+                        chartType: data.chartType,
+                        title: data.title,
+                        query: input,
+                        chartConfig: data.chartConfig
+                    }
+                }
+                setMessages(prev => [...prev, { ...aiMsg, id: Date.now() + 1 }])
+
+                // Save AI Response
+                await supabase.from('chat_messages').insert({
+                    thread_id: threadId,
+                    role: 'ai',
+                    content: aiMsg.content,
+                    type: aiMsg.type,
+                    metadata: aiMsg.metadata
+                })
+
+                // Update thread timestamp
+                await supabase.from('chat_threads').update({ updated_at: new Date() }).eq('id', threadId)
             }
         } catch (err) {
             setMessages(prev => [...prev, {
@@ -116,6 +198,13 @@ export default function AnalyticsChat() {
         setSelectedIds(prev =>
             prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
         )
+    }
+
+    const deleteThread = async (id) => {
+        if (!confirm("Are you sure?")) return
+        await supabase.from('chat_threads').delete().eq('id', id)
+        setThreads(threads.filter(t => t.id !== id))
+        if (activeThreadId === id) startNewThread()
     }
 
     const handleSaveToDashboard = async (dashboardId) => {
@@ -268,15 +357,16 @@ export default function AnalyticsChat() {
 
     return (
         <div className="flex flex-col h-[calc(100vh-6rem)] sm:h-[calc(100vh-8rem)] glass-premium rounded-none sm:rounded-[3rem] overflow-hidden relative">
-            {/* Immersive background decoration */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-64 bg-primary/5 blur-[120px] pointer-events-none" />
 
-            {/* Header */}
             <header className="px-6 sm:px-10 py-4 sm:py-6 border-b bg-background/50 backdrop-blur-2xl flex items-center justify-between relative z-30">
                 <div className="flex items-center space-x-4 sm:space-x-6">
-                    <div className="hidden sm:flex w-12 h-12 rounded-xl bg-primary/10 text-primary items-center justify-center border border-primary/20 shadow-xl shadow-primary/10">
-                        <Sparkles className="w-6 h-6 animate-pulse" />
-                    </div>
+                    <button
+                        onClick={() => setShowThreads(!showThreads)}
+                        className={`w-12 h-12 rounded-xl flex items-center justify-center border transition-all ${showThreads ? 'bg-primary text-white border-primary' : 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'}`}
+                    >
+                        <History className="w-6 h-6" />
+                    </button>
                     <div>
                         <h2 className="font-black text-lg sm:text-2xl tracking-tighter text-foreground font-heading italic">
                             Neural Assistant<span className="text-primary not-italic">.</span>
@@ -288,126 +378,175 @@ export default function AnalyticsChat() {
                     </div>
                 </div>
 
-                <div className="relative">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full px-4 sm:px-6 h-10 sm:h-12 border-border hover:border-primary/40 bg-background/50 text-[10px] font-black uppercase tracking-widest transition-all"
-                        onClick={() => setShowDatasetSelector(!showDatasetSelector)}
-                    >
-                        <Database className="w-3.5 h-3.5 mr-2 text-primary" />
-                        <span className="hidden sm:inline">{selectedIds.length} Active Nodes</span>
-                        <span className="sm:hidden">{selectedIds.length} Nodes</span>
-                        <ChevronDownIcon className={`w-3.5 h-3.5 ml-2 transition-transform ${showDatasetSelector ? 'rotate-180' : ''}`} />
+                <div className="flex items-center space-x-3">
+                    <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" onClick={startNewThread}>
+                        <Plus className="w-5 h-5" />
                     </Button>
+                    <div className="relative">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded-full px-4 sm:px-6 h-10 sm:h-12 border-border hover:border-primary/40 bg-background/50 text-[10px] font-black uppercase tracking-widest transition-all"
+                            onClick={() => setShowDatasetSelector(!showDatasetSelector)}
+                        >
+                            <Database className="w-3.5 h-3.5 mr-2 text-primary" />
+                            <span className="hidden sm:inline">{selectedIds.length} Nodes</span>
+                            <ChevronDownIcon className={`w-3.5 h-3.5 ml-2 transition-transform ${showDatasetSelector ? 'rotate-180' : ''}`} />
+                        </Button>
 
-                    {showDatasetSelector && (
-                        <Card className="absolute right-0 mt-4 w-72 sm:w-80 p-5 shadow-3xl border-border bg-card z-50 animate-fade-in rounded-[2rem]">
-                            <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-4 px-2">Knowledge Sources</h4>
-                            <div className="space-y-1.5 max-h-72 overflow-y-auto pr-2">
-                                {datasets.map(ds => (
-                                    <div
-                                        key={ds.id}
-                                        onClick={() => toggleDataset(ds.id)}
-                                        className={`flex items-center justify-between p-3.5 rounded-xl cursor-pointer transition-all ${selectedIds.includes(ds.id) ? 'bg-primary/10 border border-primary/20' : 'hover:bg-muted border border-transparent'}`}
-                                    >
-                                        <div className="flex items-center space-x-3 truncate">
-                                            <div className={`p-2 rounded-lg ${selectedIds.includes(ds.id) ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
-                                                <Database className="w-3.5 h-3.5" />
+                        {showDatasetSelector && (
+                            <Card className="absolute right-0 mt-4 w-72 sm:w-80 p-5 shadow-3xl border-border bg-card z-50 animate-fade-in rounded-[2rem]">
+                                <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-4 px-2">Knowledge Sources</h4>
+                                <div className="space-y-1.5 max-h-72 overflow-y-auto pr-2">
+                                    {datasets.map(ds => (
+                                        <div
+                                            key={ds.id}
+                                            onClick={() => toggleDataset(ds.id)}
+                                            className={`flex items-center justify-between p-3.5 rounded-xl cursor-pointer transition-all ${selectedIds.includes(ds.id) ? 'bg-primary/10 border border-primary/20' : 'hover:bg-muted border border-transparent'}`}
+                                        >
+                                            <div className="flex items-center space-x-3 truncate">
+                                                <div className={`p-2 rounded-lg ${selectedIds.includes(ds.id) ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
+                                                    <Database className="w-3.5 h-3.5" />
+                                                </div>
+                                                <span className={`text-xs font-bold truncate ${selectedIds.includes(ds.id) ? 'text-foreground' : 'text-muted-foreground'}`}>{ds.name}</span>
                                             </div>
-                                            <span className={`text-xs font-bold truncate ${selectedIds.includes(ds.id) ? 'text-foreground' : 'text-muted-foreground'}`}>{ds.name}</span>
+                                            {selectedIds.includes(ds.id) && <Check className="w-3.5 h-3.5 text-primary" />}
                                         </div>
-                                        {selectedIds.includes(ds.id) && <Check className="w-3.5 h-3.5 text-primary" />}
-                                    </div>
-                                ))}
-                                {datasets.length === 0 && (
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 text-center py-6">No sources found.</p>
-                                )}
-                            </div>
-                        </Card>
-                    )}
+                                    ))}
+                                </div>
+                            </Card>
+                        )}
+                    </div>
                 </div>
             </header>
 
-            {/* Chat Messages */}
-            <div className="flex-1 p-6 sm:p-10 overflow-y-auto space-y-8 bg-gradient-to-b from-transparent to-secondary/20 scroll-smooth">
-                {messages.map((msg) => (
-                    <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
-                        <div className={`max-w-[90%] sm:max-w-[80%] ${msg.role === 'user' ? 'bg-primary text-white rounded-[2rem] rounded-tr-none px-6 sm:px-8 py-4 sm:py-5 shadow-xl shadow-primary/20 text-sm sm:text-base font-medium' : 'w-full space-y-6'}`}>
-                            {msg.role === 'ai' ? (
-                                <div className="space-y-6">
-                                    <div className={`rounded-[2rem] rounded-tl-none p-6 sm:p-8 border backdrop-blur-md relative overflow-hidden ${msg.type === 'error' ? 'bg-red-500/5 text-red-500 border-red-500/20' : 'bg-card/50 border-border shadow-lg'}`}>
-                                        <div className="absolute top-0 left-0 w-1 h-full bg-primary/20" />
-                                        <p className="text-foreground/90 leading-relaxed text-sm sm:text-base font-medium">{msg.content}</p>
-                                        {msg.sql && (
-                                            <div className="mt-6 pt-6 border-t border-border">
-                                                <details className="cursor-pointer group">
-                                                    <summary className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.3em] flex items-center group-hover:text-primary transition-colors">
-                                                        Visual Logical Schema
-                                                    </summary>
-                                                    <div className="mt-4 p-4 bg-muted/50 text-primary font-mono text-[10px] rounded-xl overflow-x-auto border border-border">
-                                                        {msg.sql}
-                                                    </div>
-                                                </details>
-                                            </div>
-                                        )}
+            <div className="flex-1 flex overflow-hidden relative">
+                {/* Threads Sidebar */}
+                {showThreads && (
+                    <div className="w-80 border-r border-border bg-card/30 backdrop-blur-3xl animate-in slide-in-from-left duration-300 absolute lg:relative z-40 h-full overflow-y-auto p-6 space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Neural Logs</h3>
+                            <button onClick={() => setShowThreads(false)} className="lg:hidden p-2"><X className="w-4 h-4" /></button>
+                        </div>
+                        <div className="space-y-2">
+                            {threads.map(t => (
+                                <div
+                                    key={t.id}
+                                    onClick={() => loadThread(t.id)}
+                                    className={`group p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden ${activeThreadId === t.id ? 'bg-primary/10 border-primary/30' : 'bg-transparent border-transparent hover:bg-muted/50'}`}
+                                >
+                                    <div className="flex items-center space-x-3 relative z-10">
+                                        <MessageSquare className={`w-4 h-4 ${activeThreadId === t.id ? 'text-primary' : 'text-muted-foreground/40'}`} />
+                                        <span className={`text-xs font-bold truncate ${activeThreadId === t.id ? 'text-foreground' : 'text-muted-foreground/60'}`}>{t.title}</span>
                                     </div>
-
-                                    {msg.type === 'analysis' && msg.results?.length > 0 && (
-                                        <Card className="p-6 sm:p-10 border-border bg-card/40 backdrop-blur-xl shadow-2xl rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden group relative">
-                                            <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
-                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 relative z-10">
-                                                <h4 className="font-black text-lg flex items-center text-foreground font-heading italic">
-                                                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                                                        {msg.chartType === 'pie' ? <PieChartIcon className="w-5 h-5 text-primary" /> : <BarChart3 className="w-5 h-5 text-primary" />}
-                                                    </div>
-                                                    {msg.title || "Intelligence Render"}
-                                                </h4>
-                                                <div className="flex items-center space-x-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-9 rounded-full px-4 text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-primary hover:text-white transition-all"
-                                                        onClick={() => {
-                                                            setSavingWidget(msg)
-                                                            setIsSaveModalOpen(true)
-                                                        }}
-                                                    >
-                                                        <Pin className="w-3.5 h-3.5 mr-2" /> Pin
-                                                    </Button>
-                                                    <Button variant="outline" size="sm" className="h-9 rounded-full px-4 text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-muted transition-all">
-                                                        <Download className="w-3.5 h-3.5 mr-2" /> Export
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                            <div className="relative z-10">
-                                                {renderChart(msg)}
-                                            </div>
-                                        </Card>
-                                    )}
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); deleteThread(t.id); }}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 p-2 text-red-400 hover:text-red-500 transition-all"
+                                    >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
                                 </div>
-                            ) : (
-                                <p className="font-bold tracking-tight">{msg.content}</p>
+                            ))}
+                            {threads.length === 0 && (
+                                <div className="text-center py-10">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">No history found.</p>
+                                </div>
                             )}
                         </div>
                     </div>
-                ))}
-                {loading && (
-                    <div className="flex justify-start animate-pulse">
-                        <div className="rounded-full px-6 py-4 bg-muted/50 border border-border flex items-center space-x-3">
-                            <div className="flex space-x-1">
-                                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
-                                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]" />
-                                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" />
-                            </div>
-                            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Synthesizing...</span>
-                        </div>
-                    </div>
                 )}
-                <div ref={messagesEndRef} />
+
+                {/* Chat Messages */}
+                <div className="flex-1 p-6 sm:p-10 overflow-y-auto space-y-8 bg-gradient-to-b from-transparent to-secondary/20 scroll-smooth relative">
+                    {messages.map((msg) => (
+                        <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
+                            <div className={`max-w-[90%] sm:max-w-[80%] ${msg.role === 'user' ? 'bg-primary text-white rounded-[2rem] rounded-tr-none px-6 sm:px-8 py-4 sm:py-5 shadow-xl shadow-primary/20 text-sm sm:text-base font-medium' : 'w-full space-y-6'}`}>
+                                {msg.role === 'ai' ? (
+                                    <div className="space-y-6">
+                                        <div className={`rounded-[2rem] rounded-tl-none p-6 sm:p-8 border backdrop-blur-md relative overflow-hidden ${msg.type === 'error' ? 'bg-red-500/5 text-red-500 border-red-500/20' : 'bg-card/50 border-border shadow-lg'}`}>
+                                            <div className="absolute top-0 left-0 w-1 h-full bg-primary/20" />
+                                            <p className="text-foreground/90 leading-relaxed text-sm sm:text-base font-medium">{msg.content}</p>
+                                            {msg.sql && (
+                                                <div className="mt-6 pt-6 border-t border-border">
+                                                    <details className="cursor-pointer group">
+                                                        <summary className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.3em] flex items-center group-hover:text-primary transition-colors">
+                                                            Visual Logical Schema
+                                                        </summary>
+                                                        <div className="mt-4 p-4 bg-muted/50 text-primary font-mono text-[10px] rounded-xl overflow-x-auto border border-border">
+                                                            {msg.sql}
+                                                        </div>
+                                                    </details>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {msg.type === 'analysis' && msg.results?.length > 0 && (
+                                            <Card className="p-6 sm:p-10 border-border bg-card/40 backdrop-blur-xl shadow-2xl rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden group relative">
+                                                <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 relative z-10">
+                                                    <h4 className="font-black text-lg flex items-center text-foreground font-heading italic">
+                                                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                                            {msg.chartType === 'pie' ? <PieChartIcon className="w-5 h-5 text-primary" /> : <BarChart3 className="w-5 h-5 text-primary" />}
+                                                        </div>
+                                                        {msg.title || "Intelligence Render"}
+                                                    </h4>
+                                                    <div className="flex items-center space-x-2">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-9 rounded-full px-4 text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-primary hover:text-white transition-all"
+                                                            onClick={() => {
+                                                                setSavingWidget(msg)
+                                                                setIsSaveModalOpen(true)
+                                                            }}
+                                                        >
+                                                            <Pin className="w-3.5 h-3.5 mr-2" /> Pin
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-9 rounded-full px-4 text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-muted transition-all"
+                                                            onClick={() => {
+                                                                const keys = Object.keys(msg.metadata.results[0]);
+                                                                const csv = [
+                                                                    keys.join(','),
+                                                                    ...msg.metadata.results.map(row => keys.map(k => JSON.stringify(row[k])).join(','))
+                                                                ].join('\n');
+                                                                const blob = new Blob([csv], { type: 'text/csv' });
+                                                                const url = window.URL.createObjectURL(blob);
+                                                                const a = document.createElement('a');
+                                                                a.setAttribute('href', url);
+                                                                a.setAttribute('download', `${msg.metadata.title || 'insight'}.csv`);
+                                                                a.click();
+                                                            }}
+                                                        >
+                                                            <Download className="w-3.5 h-3.5 mr-2" /> Export CSV
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                                <div className="relative z-10">
+                                                    {renderChart(msg)}
+                                                </div>
+                                            </Card>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <p className="font-bold tracking-tight">{msg.content}</p>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                    {loading && (
+                        <div className="flex justify-start animate-pulse">
+                            <div className="rounded-full px-6 py-4 bg-muted/50 border border-border flex items-center space-x-3">
+                                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Synthesizing...</span>
+                            </div>
+                        </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                </div>
             </div>
 
-            {/* Input Form */}
             <footer className="p-4 sm:p-8 bg-background/80 backdrop-blur-3xl border-t border-border relative z-20">
                 <form onSubmit={handleSend} className="relative max-w-5xl mx-auto flex items-center">
                     <div className="relative flex-1 group">
@@ -427,16 +566,6 @@ export default function AnalyticsChat() {
                         </button>
                     </div>
                 </form>
-                <div className="mt-6 hidden sm:flex items-center justify-center gap-8 opacity-40">
-                    <div className="flex items-center text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        <Database className="w-3 h-3 mr-2" />
-                        Dataset Context
-                    </div>
-                    <div className="flex items-center text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        <Sparkles className="w-3 h-3 mr-2" />
-                        AI Logic Base
-                    </div>
-                </div>
             </footer>
 
             {/* Pin Modal */}
@@ -450,9 +579,6 @@ export default function AnalyticsChat() {
                                 <X className="w-5 h-5" />
                             </Button>
                         </div>
-
-                        <p className="text-muted-foreground text-sm mb-8 leading-relaxed">Choose a dashboard to persist this intelligence insight.</p>
-
                         <div className="space-y-3 max-h-64 overflow-y-auto mb-8 pr-2">
                             {dashboards.map(db => (
                                 <button
@@ -470,18 +596,7 @@ export default function AnalyticsChat() {
                                     <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                                 </button>
                             ))}
-                            <Link href="/app/dashboards" className="block mt-4">
-                                <Button variant="ghost" className="w-full justify-center py-5 border border-dashed border-border rounded-2xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-muted transition-all">
-                                    <Plus className="w-3.5 h-3.5 mr-2" /> New Dashboard
-                                </Button>
-                            </Link>
                         </div>
-
-                        {isSaving && (
-                            <div className="flex items-center justify-center py-4 text-primary font-black uppercase tracking-widest text-[10px]">
-                                <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Persisting Node...
-                            </div>
-                        )}
                     </Card>
                 </div>
             )}

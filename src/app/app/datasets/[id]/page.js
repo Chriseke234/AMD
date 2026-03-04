@@ -19,8 +19,30 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
     const [previewData, setPreviewData] = useState([])
     const [loading, setLoading] = useState(true)
     const [cleaning, setCleaning] = useState(false)
+    const [scanning, setScanning] = useState(false)
+    const [scanResults, setScanResults] = useState([])
     const supabase = createClient()
     const router = useRouter()
+
+    const handleNeuralScan = async () => {
+        setScanning(true)
+        try {
+            const res = await fetch('/api/datasets/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ datasetId: id })
+            })
+            const data = await res.json()
+            if (data.error) throw new Error(data.error)
+
+            setScanResults(data.scanResults)
+            setDataset(prev => ({ ...prev, health_score: data.healthScore }))
+        } catch (err) {
+            alert(err.message)
+        } finally {
+            setScanning(false)
+        }
+    }
 
     useEffect(() => {
         const fetchDataset = async () => {
@@ -150,9 +172,23 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                             </h3>
                             <div className="space-y-3">
                                 <Button
-                                    className="w-full justify-start h-14 rounded-2xl shadow-md group"
+                                    className="w-full justify-start h-14 rounded-2xl shadow-md group relative overflow-hidden"
+                                    onClick={handleNeuralScan}
+                                    disabled={cleaning || scanning}
+                                >
+                                    {scanning ? (
+                                        <Loader2 className="w-4 h-4 mr-3 animate-spin" />
+                                    ) : (
+                                        <Sparkles className="w-4 h-4 mr-3 group-hover:scale-110 transition-transform text-amber-300" />
+                                    )}
+                                    Neural Auto-Scan
+                                    {scanning && <div className="absolute inset-0 bg-primary/20 animate-pulse" />}
+                                </Button>
+                                <Button
+                                    variant="secondary"
+                                    className="w-full justify-start h-14 rounded-2xl shadow-sm group"
                                     onClick={() => handleCleanAction('remove_duplicates', { columns: columns.map(c => c.name) })}
-                                    disabled={cleaning}
+                                    disabled={cleaning || scanning}
                                 >
                                     <Copy className="w-4 h-4 mr-3 group-hover:scale-110 transition-transform" />
                                     Deduplicate Data
@@ -161,11 +197,28 @@ export default function DatasetDetailPage({ params: paramsPromise }) {
                                     variant="outline"
                                     className="w-full justify-start h-14 rounded-2xl group border-amber-500/20 text-amber-600 hover:bg-amber-500/5"
                                     onClick={() => handleCleanAction('drop_nulls', { columns: columns.map(c => c.name) })}
-                                    disabled={cleaning}
+                                    disabled={cleaning || scanning}
                                 >
                                     <Filter className="w-4 h-4 mr-3 group-hover:scale-110 transition-transform" />
                                     Purge Null Values
                                 </Button>
+
+                                {scanResults.length > 0 && (
+                                    <div className="mt-8 p-6 rounded-[2rem] bg-amber-500/5 border border-amber-500/10 space-y-4">
+                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-600">Scan Anomalies</h4>
+                                        <div className="space-y-3">
+                                            {scanResults.map((res, i) => (
+                                                <div key={i} className="flex items-center justify-between text-xs">
+                                                    <span className="font-bold text-foreground/60">{res.column}</span>
+                                                    <div className="flex items-center space-x-2">
+                                                        {res.nullCount > 0 && <span className="text-[9px] font-black bg-red-500/10 text-red-500 px-2 py-0.5 rounded">{res.nullCount} NULLS</span>}
+                                                        {res.outliers > 0 && <span className="text-[9px] font-black bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded">{res.outliers} OUTLIERS</span>}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
