@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/Card"
 import {
     Send, Sparkles, Database, Trash2, Layout as LayoutIcon, Plus, Check, ChevronRight, ChevronDown as ChevronDownIcon, Download, Share2,
     BarChart3, LineChart as LineChartIcon, PieChart as PieChartIcon, Table as TableIcon,
-    Pin, Save, Loader2, X, Info, AlertCircle, Menu, History, MessageSquare, Edit3
+    Pin, Save, Loader2, X, Info, AlertCircle, Menu, History, MessageSquare, Edit3, Shield
 } from "lucide-react"
 import { createClient } from "@/lib/supabase"
 import {
@@ -166,8 +166,10 @@ export default function AnalyticsChat() {
                         results: data.results,
                         chartType: data.chartType,
                         title: data.title,
-                        query: input,
-                        chartConfig: data.chartConfig
+                        query: messageText,
+                        chartConfig: data.chartConfig,
+                        isForecast: data.isForecast,
+                        forecastResults: data.forecastResults
                     }
                 }
                 setMessages(prev => [...prev, { ...aiMsg, id: Date.now() + 1 }])
@@ -236,9 +238,36 @@ export default function AnalyticsChat() {
         }
     }
 
+    const handleCreateAlert = async (msg) => {
+        try {
+            const res = await fetch('/api/sentry/alerts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: `Anomaly Watch: ${msg.title}`,
+                    sql_query: msg.metadata.sql,
+                    condition: "Threshold Breach > 0",
+                    dataset_id: selectedIds[0]
+                })
+            })
+            const data = await res.json()
+            if (!data.error) {
+                alert("Neural Sentry bound to this insight!")
+            }
+        } catch (err) {
+            alert("Failed to bind Sentry")
+        }
+    }
+
     const renderChart = (msg) => {
-        const { chartType, results } = msg
+        const { chartType, results, isForecast, forecastResults } = msg
         if (!results || results.length === 0) return null
+
+        // Merge forecast data if present
+        const combinedData = isForecast && forecastResults ? [
+            ...results.map(r => ({ ...r, status: 'historical' })),
+            ...forecastResults.map(r => ({ ...r, status: 'forecast' }))
+        ] : results;
 
         const dataKeys = Object.keys(results[0])
         const xKey = dataKeys[0]
@@ -247,39 +276,62 @@ export default function AnalyticsChat() {
         const strokeColor = theme === 'dark' ? '#334155' : '#e2e8f0';
         const textColor = theme === 'dark' ? '#94a3b8' : '#64748b';
 
+        // Custom Tooltip with Forecast indication
+        const CustomTooltip = ({ active, payload, label }) => {
+            if (active && payload && payload.length) {
+                const isForecastPoint = payload[0].payload.status === 'forecast';
+                return (
+                    <div className="bg-card border border-border p-4 rounded-2xl shadow-2xl backdrop-blur-xl animate-in zoom-in-95 duration-200">
+                        <div className="flex items-center justify-between gap-4 mb-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</p>
+                            {isForecastPoint && (
+                                <span className="bg-primary/20 text-primary text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-tighter">Neuro-Projection</span>
+                            )}
+                        </div>
+                        {payload.map((entry, i) => (
+                            <div key={i} className="flex items-center justify-between space-x-4">
+                                <span className="text-xs font-bold text-foreground">{entry.name}:</span>
+                                <span className="text-xs font-black text-primary">{entry.value.toLocaleString()}</span>
+                            </div>
+                        ))}
+                        <div className="mt-3 pt-3 border-t border-border flex items-center text-[9px] font-black text-primary/60 uppercase italic">
+                            <Sparkles className="w-2.5 h-2.5 mr-1.5" /> {isForecastPoint ? 'Predicted Confidence High' : 'Neural Insight Active'}
+                        </div>
+                    </div>
+                );
+            }
+            return null;
+        };
+
         switch (chartType) {
             case 'bar':
                 return (
                     <div className="h-64 sm:h-80 w-full mt-4">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={results}>
+                            <BarChart data={combinedData}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={strokeColor} />
                                 <XAxis dataKey={xKey} fontSize={10} tickLine={false} axisLine={false} stroke={textColor} />
                                 <YAxis fontSize={10} tickLine={false} axisLine={false} stroke={textColor} />
                                 <Tooltip
                                     cursor={{ fill: 'var(--primary)', opacity: 0.1 }}
-                                    content={({ active, payload, label }) => {
-                                        if (active && payload && payload.length) {
-                                            return (
-                                                <div className="bg-card border border-border p-4 rounded-2xl shadow-2xl backdrop-blur-xl animate-in zoom-in-95 duration-200">
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">{label}</p>
-                                                    {payload.map((entry, i) => (
-                                                        <div key={i} className="flex items-center justify-between space-x-4">
-                                                            <span className="text-xs font-bold text-foreground">{entry.name}:</span>
-                                                            <span className="text-xs font-black text-primary">{entry.value.toLocaleString()}</span>
-                                                        </div>
-                                                    ))}
-                                                    <div className="mt-3 pt-3 border-t border-border flex items-center text-[9px] font-black text-primary/60 uppercase italic">
-                                                        <Sparkles className="w-2.5 h-2.5 mr-1.5" /> Neural Insight Active
-                                                    </div>
-                                                </div>
-                                            )
-                                        }
-                                        return null
-                                    }}
+                                    content={<CustomTooltip />}
                                 />
                                 {yKeys.map((key, i) => (
-                                    <Bar key={key} dataKey={key} fill={COLORS[i % COLORS.length]} radius={[6, 6, 0, 0]} />
+                                    <Bar
+                                        key={key}
+                                        dataKey={key}
+                                        fill={COLORS[i % COLORS.length]}
+                                        radius={[6, 6, 0, 0]}
+                                    >
+                                        {combinedData.map((entry, index) => (
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fillOpacity={entry.status === 'forecast' ? 0.4 : 1}
+                                                stroke={entry.status === 'forecast' ? COLORS[i % COLORS.length] : 'none'}
+                                                strokeDasharray={entry.status === 'forecast' ? "5 5" : "0"}
+                                            />
+                                        ))}
+                                    </Bar>
                                 ))}
                             </BarChart>
                         </ResponsiveContainer>
@@ -289,20 +341,28 @@ export default function AnalyticsChat() {
                 return (
                     <div className="h-64 sm:h-80 w-full mt-4">
                         <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={results}>
+                            <LineChart data={combinedData}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={strokeColor} />
                                 <XAxis dataKey={xKey} fontSize={10} tickLine={false} axisLine={false} stroke={textColor} />
                                 <YAxis fontSize={10} tickLine={false} axisLine={false} stroke={textColor} />
-                                <Tooltip
-                                    contentStyle={{
-                                        borderRadius: '16px',
-                                        border: '1px solid var(--border)',
-                                        backgroundColor: 'var(--card)',
-                                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)'
-                                    }}
-                                />
+                                <Tooltip content={<CustomTooltip />} />
                                 {yKeys.map((key, i) => (
-                                    <Line key={key} type="monotone" dataKey={key} stroke={COLORS[i % COLORS.length]} strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: 'var(--card)' }} activeDot={{ r: 6, strokeWidth: 0 }} />
+                                    <Line
+                                        key={key}
+                                        type="monotone"
+                                        dataKey={key}
+                                        stroke={COLORS[i % COLORS.length]}
+                                        strokeWidth={3}
+                                        dot={(props) => {
+                                            const { cx, cy, payload } = props;
+                                            if (payload.status === 'forecast') {
+                                                return <circle cx={cx} cy={cy} r={4} fill="var(--card)" stroke={COLORS[i % COLORS.length]} strokeWidth={2} strokeDasharray="2 2" />;
+                                            }
+                                            return <circle cx={cx} cy={cy} r={4} fill="var(--card)" stroke={COLORS[i % COLORS.length]} strokeWidth={2} />;
+                                        }}
+                                        activeDot={{ r: 6, strokeWidth: 0 }}
+                                        strokeDasharray={isForecast ? "5 5" : "0"}
+                                    />
                                 ))}
                             </LineChart>
                         </ResponsiveContainer>
@@ -509,6 +569,14 @@ export default function AnalyticsChat() {
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
+                                                            className="flex-1 sm:flex-none h-8 sm:h-9 rounded-full px-3 sm:px-4 text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:border-primary/40 text-primary transition-all"
+                                                            onClick={() => handleCreateAlert(msg)}
+                                                        >
+                                                            <Shield className="w-3.5 h-3.5 mr-1.5 sm:mr-2" /> Watch
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
                                                             className="flex-1 sm:flex-none h-8 sm:h-9 rounded-full px-3 sm:px-4 text-[9px] font-black uppercase tracking-widest border-border bg-background/50 hover:bg-primary hover:text-white transition-all"
                                                             onClick={() => {
                                                                 setSavingWidget(msg)
@@ -556,7 +624,7 @@ export default function AnalyticsChat() {
                             <div className="rounded-[1.8rem] rounded-tl-none p-5 sm:p-8 border border-border bg-card/50 backdrop-blur-md w-full max-w-[70%] space-y-4">
                                 <div className="flex items-center space-x-2 mb-2">
                                     <Loader2 className="w-3 h-3 text-primary animate-spin" />
-                                    <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Neural Synthesis In Progress</span>
+                                    <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{messages[messages.length - 1]?.metadata?.isForecast ? 'Neural Analytics Prediction' : 'Neural Analytics Synthesis'}</span>
                                 </div>
                                 <Skeleton className="h-4 w-full" />
                                 <Skeleton className="h-4 w-[90%]" />

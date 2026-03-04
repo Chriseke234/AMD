@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, Database, BarChart3, Settings, LogOut, PlusCircle, Users, Zap, LayoutGrid, ChevronRight, Menu, X } from "lucide-react"
+import { Home, Database, BarChart3, Settings, LogOut, PlusCircle, Users, Zap, LayoutGrid, ChevronRight, Menu, X, ShieldCheck, Sparkles } from "lucide-react"
 import { createClient } from "@/lib/supabase"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
@@ -20,10 +20,11 @@ export function Sidebar() {
 
     const navItems = [
         { name: "Console", icon: Home, href: "/app" },
-        { name: "Datasets", icon: Database, href: "/app/datasets" },
-        { name: "Neural Chat", icon: BarChart3, href: "/app/chat" },
-        { name: "Dashboards", icon: LayoutGrid, href: "/app/dashboards" },
-        { name: "Team Governance", icon: Users, href: "/app/team" },
+        { name: "Inventory", icon: Database, href: "/app/datasets" },
+        { name: "Assistant", icon: Sparkles, href: "/app/chat" },
+        { name: "Dashboard", icon: LayoutGrid, href: "/app/dashboards" },
+        { name: "Sentry", icon: ShieldCheck, href: "/app/sentry" },
+        { name: "Teams", icon: Users, href: "/app/team" },
         { name: "Settings", icon: Settings, href: "/app/settings" },
     ]
 

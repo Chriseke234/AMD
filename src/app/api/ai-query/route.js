@@ -57,6 +57,8 @@ export async function POST(request) {
                 insight: z.string().describe("A brief, helpful interpretation of the query results."),
                 chartType: z.enum(['bar', 'line', 'pie', 'table']).describe("The best visualization type for this data."),
                 title: z.string().describe("A concise title for the chart/result."),
+                isForecast: z.boolean().describe("Set to true if the user asked for a forecast or prediction."),
+                forecastResults: z.array(z.any()).optional().describe("If isForecast is true, provide 3-5 hypothetical 'forecasted' data points extending the trend."),
                 suggestedQuestions: z.array(z.string()).max(3).describe("3 follow-up questions the user might want to ask based on this result.")
             }),
             system: `You are an expert Data Analyst for "AskMyData".
@@ -68,9 +70,14 @@ export async function POST(request) {
             RULES:
             1. ONLY generate SELECT queries.
             2. ALWAYS use the full table name with schema: data."table_name"
-            3. If a question is ambiguous, make a reasonable assumption.
-            4. If the question cannot be answered with the given schema, explain why in the 'insight' field and leave 'sql' empty.
-            5. Ensure SQL is valid PostgreSQL.`,
+            3. CROSS-CORRELATION: If the user selects multiple datasets and asks for a comparison or link, look for shared columns (e.g. 'date', 'region', 'id') to JOIN them.
+            4. If the user asks for a 'forecast', 'prediction', or 'future trend':
+               - Set 'isForecast' to true.
+               - Generate SQL for the HISTORICAL data.
+               - In 'forecastResults', provide 3-5 predicted future data points that logically follow the trend of the historical data. Ensure the keys match the SQL results exactly.
+            5. If a question is ambiguous, make a reasonable assumption.
+            6. If the question cannot be answered with the given schema, explain why in the 'insight' field and leave 'sql' empty.
+            7. Ensure SQL is valid PostgreSQL.`,
             prompt: prompt
         })
 
@@ -102,6 +109,8 @@ export async function POST(request) {
             results: results || [],
             chartType: aiResponse.chartType,
             title: aiResponse.title,
+            isForecast: aiResponse.isForecast,
+            forecastResults: aiResponse.forecastResults || [],
             suggestedQuestions: aiResponse.suggestedQuestions
         })
 
