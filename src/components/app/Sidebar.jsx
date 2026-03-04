@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, Database, BarChart3, Settings, LogOut, PlusCircle, Users, Zap, LayoutGrid, ChevronRight, Menu, X, ShieldCheck, Sparkles } from "lucide-react"
+import { Home, Database, BarChart3, Settings, LogOut, PlusCircle, Users, Zap, LayoutGrid, ChevronRight, Menu, X, ShieldCheck, Sparkles, Share2 } from "lucide-react"
 import { createClient } from "@/lib/supabase"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
@@ -24,6 +24,8 @@ export function Sidebar() {
         { name: "Assistant", icon: Sparkles, href: "/app/chat" },
         { name: "Dashboard", icon: LayoutGrid, href: "/app/dashboards" },
         { name: "Sentry", icon: ShieldCheck, href: "/app/sentry" },
+        { name: 'Knowledge', href: '/app/graph', icon: Share2 },
+        { name: 'Canvas', href: '/app/canvas', icon: LayoutGrid },
         { name: "Teams", icon: Users, href: "/app/team" },
         { name: "Settings", icon: Settings, href: "/app/settings" },
     ]
