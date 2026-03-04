@@ -137,33 +137,33 @@ export default function GraphPage() {
     }, [datasets])
 
     return (
-        <div className="h-[calc(100vh-12rem)] relative overflow-hidden rounded-[3rem] border border-white/5 bg-[#050505] group">
+        <div className="h-[calc(100vh-8rem)] sm:h-[calc(100vh-12rem)] relative overflow-hidden rounded-2xl sm:rounded-[3rem] border border-white/5 bg-[#050505] group">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.05),transparent_70%)]" />
 
             {/* UI Overlay */}
-            <div className="absolute top-10 left-10 z-10 space-y-6">
-                <div className="space-y-2">
-                    <div className="flex items-center space-x-3 mb-1">
+            <div className="absolute top-4 left-4 sm:top-10 sm:left-10 z-10 space-y-3 sm:space-y-6">
+                <div className="space-y-1 sm:space-y-2">
+                    <div className="flex items-center space-x-2 sm:space-x-3 mb-1">
                         <Share2 className="w-3 h-3 text-primary animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Knowledge Graph Prototype</span>
+                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] text-primary">Knowledge Graph Prototype</span>
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter text-white">Registry Topology<span className="text-primary">.</span></h1>
+                    <h1 className="text-2xl sm:text-4xl font-black tracking-tighter text-white">Registry Topology<span className="text-primary">.</span></h1>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                    <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl flex items-center space-x-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-2">
+                    <div className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl flex items-center space-x-2 sm:space-x-3">
                         <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-glow-indigo" />
-                        <span className="text-[8px] font-black uppercase tracking-widest text-white/40">Raw Nodes: {datasets.filter(d => d.source_type !== 'derived').length}</span>
+                        <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-white/40">Raw Nodes: {datasets.filter(d => d.source_type !== 'derived').length}</span>
                     </div>
-                    <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl flex items-center space-x-3">
+                    <div className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl flex items-center space-x-2 sm:space-x-3">
                         <div className="w-2 h-2 rounded-full bg-sky-400 shadow-glow-sky" />
-                        <span className="text-[8px] font-black uppercase tracking-widest text-white/40">Derived: {datasets.filter(d => d.source_type === 'derived').length}</span>
+                        <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-white/40">Derived: {datasets.filter(d => d.source_type === 'derived').length}</span>
                     </div>
                 </div>
             </div>
 
-            <div className="absolute bottom-10 right-10 z-10 flex flex-col items-end space-y-4">
-                <div className="p-6 rounded-[2rem] bg-black/40 border border-white/5 backdrop-blur-2xl max-w-xs space-y-4">
+            <div className="absolute bottom-4 right-4 sm:bottom-10 sm:right-10 z-10 flex flex-col items-end space-y-3 sm:space-y-4">
+                <div className="hidden sm:block p-6 rounded-[2rem] bg-black/40 border border-white/5 backdrop-blur-2xl max-w-xs space-y-4">
                     <div className="flex items-center space-x-3 text-primary">
                         <Info className="w-4 h-4" />
                         <span className="text-[10px] font-black uppercase tracking-widest">Neural Linkage</span>
@@ -173,8 +173,8 @@ export default function GraphPage() {
                     </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <button className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors"><Focus className="w-4 h-4" /></button>
-                    <button className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors"><MousePointer2 className="w-4 h-4" /></button>
+                    <button className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors"><Focus className="w-4 h-4" /></button>
+                    <button className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors"><MousePointer2 className="w-4 h-4" /></button>
                 </div>
             </div>
 
