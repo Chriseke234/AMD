@@ -20,7 +20,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body className={`${inter.variable} ${outfit.variable} font-sans transition-colors duration-300`}>
         <ThemeProvider>
           {children}
