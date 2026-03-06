@@ -27,6 +27,7 @@ export function Sidebar() {
         { name: 'Knowledge', href: '/app/graph', icon: Share2 },
         { name: 'Canvas', href: '/app/canvas', icon: LayoutGrid },
         { name: "Teams", icon: Users, href: "/app/team" },
+        { name: "Semantics", icon: Database, href: "/app/settings/semantics" },
         { name: "Settings", icon: Settings, href: "/app/settings" },
     ]
 

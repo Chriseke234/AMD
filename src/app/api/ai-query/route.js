@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { generateObject } from 'ai'
+import { generateObject, generateText, tool } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { z } from 'zod'
 
@@ -49,58 +49,92 @@ export async function POST(request) {
             return `Table: data."${tableName}" (Friendly name: ${info.name})\nColumns: ${info.columns.join(', ')}`
         }).join('\n\n')
 
-        // 2. Generate SQL and Insight using AI
+        // Fetch Semantic Context (Business definitions)
+        let semanticQuery = supabase.from('semantic_definitions').select('term, definition').eq('user_id', user.id);
+        if (datasetIds.length > 0) {
+            semanticQuery = semanticQuery.or(`dataset_id.in.(${datasetIds.join(',')}),dataset_id.is.null`);
+        }
+        const { data: semantics } = await semanticQuery;
+
+        const semanticContext = semantics && semantics.length > 0
+            ? "BUSINESS TERMINOLOGY & DEFINITIONS:\n" + semantics.map(s => `- ${s.term}: ${s.definition}`).join('\n')
+            : "BUSINESS TERMINOLOGY: None defined.";
+
+        // 2. Multi-Step Agentic Reasoning (Phase 1: Exploration)
+        const agentSystemPrompt = `You are an expert Data Analyst for "AskMyData".
+        Your goal is to answer the user's question by querying the database.
+        
+        SCHEMA CONTEXT:
+        ${schemaContext}
+        
+        ${semanticContext}
+        
+        RULES:
+        1. Use the 'query_database' tool to explore the data.
+        2. ALWAYS use the full table name with schema: data.table_name
+        3. If your query fails with an error, try rewriting it to fix the issue.
+        4. If the data looks anomalous or you need more context to answer a "Why" question, issue follow-up queries.
+        5. Once you have found the definitive answer, output your findings clearly in text.`;
+
+        let finalSqlUsed = "";
+        let finalResults = null;
+
+        const { text: agentText } = await generateText({
+            model: openai('gpt-4o-mini'),
+            system: agentSystemPrompt,
+            prompt: prompt,
+            maxSteps: 4,
+            tools: {
+                query_database: tool({
+                    description: 'Execute a precise Postgres SELECT query to gather data.',
+                    parameters: z.object({
+                        sql: z.string().describe("The SQL SELECT query.")
+                    }),
+                    execute: async ({ sql }) => {
+                        const { data, error } = await supabase.rpc('execute_ai_query', { sql_query: sql });
+                        if (error) {
+                            return { error: `Query failed: ${error.message}` };
+                        }
+                        // Save the last successful query state for the final output
+                        finalSqlUsed = sql;
+                        finalResults = data || [];
+                        // Return limited row data to the LLM to prevent context overflow
+                        const slice = (data || []).slice(0, 100);
+                        return { success: true, rowCount: data?.length || 0, sampleData: slice };
+                    }
+                })
+            }
+        });
+
+        if (!finalSqlUsed || !finalResults) {
+            return NextResponse.json({
+                insight: agentText || "I couldn't find any relevant data to answer your question.",
+                error: "The agent could not formulate a successful query."
+            });
+        }
+
+        // 3. Structured Formatting (Phase 2: Final UI Payload)
+        const formatPrompt = `Based on your analysis, format the findings.
+        
+        Agent's Analysis: ${agentText}
+        Final SQL Executed: ${finalSqlUsed}
+        
+        Extract the core insight, the best chart type to visualize these results, a title, and up to 3 follow-up questions.
+        If the user asked for a forecast, generate simulated future data points.`;
+
         const { object: aiResponse } = await generateObject({
             model: openai('gpt-4o-mini'),
             schema: z.object({
-                sql: z.string().describe("The SQL SELECT query to execute on the 'data' schema tables."),
-                insight: z.string().describe("A brief, helpful interpretation of the query results."),
-                chartType: z.enum(['bar', 'line', 'pie', 'table']).describe("The best visualization type for this data."),
-                title: z.string().describe("A concise title for the chart/result."),
-                isForecast: z.boolean().describe("Set to true if the user asked for a forecast or prediction."),
-                forecastResults: z.array(z.any()).optional().describe("If isForecast is true, provide 3-5 hypothetical 'forecasted' data points extending the trend."),
-                suggestedQuestions: z.array(z.string()).max(3).describe("3 follow-up questions the user might want to ask based on this result.")
+                insight: z.string().describe("A concise (1-2 sentence) executive summary of the findings."),
+                chartType: z.enum(['bar', 'line', 'pie', 'table']).describe("The best visualization type based on the data structure."),
+                title: z.string().describe("A short, descriptive title for the chart."),
+                isForecast: z.boolean().describe("True if the user asked for a prediction or forecast."),
+                forecastResults: z.array(z.any()).optional().describe("If isForecast is true, provide 3-5 predicted data points that logically follow the trend."),
+                suggestedQuestions: z.array(z.string()).max(3).describe("Follow-up questions the user might ask next.")
             }),
-            system: `You are an expert Data Analyst for "AskMyData".
-            Your goal is to transform natural language questions into precise SQL SELECT queries.
-            
-            SCHEMA CONTEXT:
-            ${schemaContext}
-            
-            RULES:
-            1. ONLY generate SELECT queries.
-            2. ALWAYS use the full table name with schema: data."table_name"
-            3. CROSS-CORRELATION: If the user selects multiple datasets and asks for a comparison or link, look for shared columns (e.g. 'date', 'region', 'id') to JOIN them.
-            4. If the user asks for a 'forecast', 'prediction', or 'future trend':
-               - Set 'isForecast' to true.
-               - Generate SQL for the HISTORICAL data.
-               - In 'forecastResults', provide 3-5 predicted future data points that logically follow the trend of the historical data. Ensure the keys match the SQL results exactly.
-            5. If a question is ambiguous, make a reasonable assumption.
-            6. If the question cannot be answered with the given schema, explain why in the 'insight' field and leave 'sql' empty.
-            7. Ensure SQL is valid PostgreSQL.`,
-            prompt: prompt
-        })
-
-        if (!aiResponse.sql) {
-            return NextResponse.json({
-                insight: aiResponse.insight,
-                error: "Could not generate a valid query for this request."
-            })
-        }
-
-        // 3. SECURE EXECUTION via RPC
-        const { data: results, error: queryError } = await supabase.rpc('execute_ai_query', {
-            sql_query: aiResponse.sql
-        })
-
-        if (queryError) {
-            console.error("SQL Execution Error:", queryError)
-            return NextResponse.json({
-                error: `Query execution failed: ${queryError.message}`,
-                sql: aiResponse.sql,
-                insight: "I tried to generate a query but it encountered an error during execution."
-            }, { status: 400 })
-        }
+            system: "You are a highly concise editorial formatting bot for AskMyData.",
+            prompt: formatPrompt
+        });
 
         // 4. Return enriched results
         return NextResponse.json({

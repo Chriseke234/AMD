@@ -31,33 +31,35 @@ export async function POST(request) {
 
         if (dsError || !dataset) throw new Error("Dataset not found")
 
-        const tableName = dataset.table_name
+        // Utility for safe Postgres quoting to prevent SQL injection
+        const quoteIdent = (ident) => `"${String(ident).replace(/"/g, '""')}"`;
+        const quoteLiteral = (lit) => `'${String(lit).replace(/'/g, "''")}'`;
+
+        const qTableName = `data.${quoteIdent(tableName)}`;
         let sql = ""
 
-        // 2. Build SQL based on operation
+        // 2. Build SQL based on operation securely
         switch (operation) {
             case 'remove_duplicates':
-                // PostgreSql trick to remove duplicates keeping one
-                sql = `DELETE FROM data.${tableName} WHERE ctid NOT IN (SELECT min(ctid) FROM data.${tableName} GROUP BY ${params.columns.join(', ')})`
-                break
+                const cols = params.columns.map(quoteIdent).join(', ');
+                sql = `DELETE FROM ${qTableName} WHERE ctid NOT IN (SELECT min(ctid) FROM ${qTableName} GROUP BY ${cols})`;
+                break;
             case 'drop_nulls':
-                const whereClause = params.columns.map(col => `"${col}" IS NULL`).join(' OR ')
-                sql = `DELETE FROM data.${tableName} WHERE ${whereClause}`
-                break
+                const whereClause = params.columns.map(col => `${quoteIdent(col)} IS NULL`).join(' OR ');
+                sql = `DELETE FROM ${qTableName} WHERE ${whereClause}`;
+                break;
             case 'rename_column':
-                sql = `ALTER TABLE data.${tableName} RENAME COLUMN "${params.oldName}" TO "${params.newName}"`
-                break
+                sql = `ALTER TABLE ${qTableName} RENAME COLUMN ${quoteIdent(params.oldName)} TO ${quoteIdent(params.newName)}`;
+                break;
             case 'fill_nulls':
-                sql = `UPDATE data.${tableName} SET "${params.column}" = '${params.value}' WHERE "${params.column}" IS NULL`
-                break
+                sql = `UPDATE ${qTableName} SET ${quoteIdent(params.column)} = ${quoteLiteral(params.value)} WHERE ${quoteIdent(params.column)} IS NULL`;
+                break;
             case 'smart_fill':
-                // AI-driven fill: for now we use a placeholder logic that would be handled 
-                // by a pre-processing step or a more complex AI-SQL hybrid.
-                // In a real scenario, we'd calculate the mode/mean via AI and apply here.
-                sql = `UPDATE data.${tableName} SET "${params.column}" = '${params.value}' WHERE "${params.column}" IS NULL`
-                break
+                // AI-driven fill: placeholder logic. Real scenario calculates mode/mean via AI.
+                sql = `UPDATE ${qTableName} SET ${quoteIdent(params.column)} = ${quoteLiteral(params.value)} WHERE ${quoteIdent(params.column)} IS NULL`;
+                break;
             default:
-                throw new Error("Invalid operation")
+                throw new Error("Invalid operation");
         }
 
         // 3. Execute via a new custom RPC (we need a more powerful exec than execute_ai_query for DML)
