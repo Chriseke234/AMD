@@ -3,6 +3,8 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { Client as PGClient } from 'pg'
 import mysql from 'mysql2/promise'
+import snowflake from 'snowflake-sdk'
+import { BigQuery } from '@google-cloud/bigquery'
 
 export async function POST(request) {
     const cookieStore = await cookies()
@@ -61,6 +63,45 @@ export async function POST(request) {
 
             const tableNames = rows.map(r => Object.values(r)[0])
             return NextResponse.json({ tables: tableNames })
+
+        } else if (type === 'snowflake') {
+            const connection = snowflake.createConnection({
+                account: config.host,
+                username: config.user,
+                password: config.password,
+                warehouse: config.warehouse,
+                database: config.database,
+                schema: config.schema || 'PUBLIC',
+                role: config.role || undefined
+            });
+
+            return new Promise((resolve, reject) => {
+                connection.connect((err, conn) => {
+                    if (err) return reject(err);
+                    conn.execute({
+                        sqlText: `SHOW TABLES IN SCHEMA "${config.database}"."${config.schema || 'PUBLIC'}"`,
+                        complete: (err, stmt, rows) => {
+                            if (err) return reject(err);
+                            const tables = rows.map(r => r.name);
+                            resolve(NextResponse.json({ tables }));
+                        }
+                    });
+                });
+            });
+
+        } else if (type === 'bigquery') {
+            const bigquery = new BigQuery({
+                projectId: config.host,
+                credentials: {
+                    client_email: config.user,
+                    private_key: config.privateKey.replace(/\\n/g, '\n'),
+                }
+            });
+
+            const dataset = bigquery.dataset(config.database);
+            const [tablesData] = await dataset.getTables();
+            const tableNames = tablesData.map(t => t.id);
+            return NextResponse.json({ tables: tableNames });
         }
 
         return NextResponse.json({ error: "Unsupported database type" }, { status: 400 })

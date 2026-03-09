@@ -16,6 +16,10 @@ export default function DBConnectorPage() {
         database: '',
         user: '',
         password: '',
+        schema: '',
+        warehouse: '',
+        role: '',
+        privateKey: '',
         ssl: true
     })
     const [loading, setLoading] = useState(false)
@@ -82,55 +86,129 @@ export default function DBConnectorPage() {
             {step === 1 ? (
                 <Card className="p-5 sm:p-8 shadow-xl border-primary/10">
                     <form onSubmit={handleTestConnection} className="space-y-5 sm:space-y-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                             <button
                                 type="button"
                                 onClick={() => { setDbType('postgres'); setConfig({ ...config, port: '5432' }) }}
-                                className={`p-3 sm:p-4 rounded-xl border flex items-center space-x-3 transition-all ${dbType === 'postgres' ? 'bg-primary/5 border-primary shadow-sm' : 'border-[var(--border)] hover:bg-[var(--muted)]'}`}
+                                className={`p-3 sm:p-4 rounded-xl border flex flex-col items-center justify-center space-y-3 transition-all ${dbType === 'postgres' ? 'bg-primary/5 border-primary shadow-sm' : 'border-[var(--border)] hover:bg-[var(--muted)]'}`}
                             >
                                 <div className={`p-2 rounded-lg ${dbType === 'postgres' ? 'bg-primary text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
                                     <Database className="w-5 h-5" />
                                 </div>
-                                <span className="font-bold">PostgreSQL</span>
+                                <span className="font-bold text-xs sm:text-sm">PostgreSQL</span>
                             </button>
                             <button
                                 type="button"
                                 onClick={() => { setDbType('mysql'); setConfig({ ...config, port: '3306' }) }}
-                                className={`p-3 sm:p-4 rounded-xl border flex items-center space-x-3 transition-all ${dbType === 'mysql' ? 'bg-primary/5 border-primary shadow-sm' : 'border-[var(--border)] hover:bg-[var(--muted)]'}`}
+                                className={`p-3 sm:p-4 rounded-xl border flex flex-col items-center justify-center space-y-3 transition-all ${dbType === 'mysql' ? 'bg-primary/5 border-primary shadow-sm' : 'border-[var(--border)] hover:bg-[var(--muted)]'}`}
                             >
                                 <div className={`p-2 rounded-lg ${dbType === 'mysql' ? 'bg-primary text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
                                     <Database className="w-5 h-5" />
                                 </div>
-                                <span className="font-bold">MySQL</span>
+                                <span className="font-bold text-xs sm:text-sm">MySQL</span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => { setDbType('snowflake'); setConfig({ ...config }) }}
+                                className={`p-3 sm:p-4 rounded-xl border flex flex-col items-center justify-center space-y-3 transition-all ${dbType === 'snowflake' ? 'bg-primary/5 border-primary shadow-sm' : 'border-[var(--border)] hover:bg-[var(--muted)]'}`}
+                            >
+                                <div className={`p-2 rounded-lg ${dbType === 'snowflake' ? 'bg-primary text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
+                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M22.9 10.3c-.3-1.1-1.1-1.9-2.2-2.3l-2.6-.9 1.1-2.4c.5-1.1.2-2.4-.8-3-1-.6-2.3-.3-3 .7l-1.4 2.1L12 3.1l-2 1.4L8.6 2.4c-.6-.9-1.9-1.2-3-.7-1.1.6-1.4 1.9-.8 3l1.1 2.4-2.6.9c-1.1.4-1.9 1.2-2.2 2.3-.4 1.1-.1 2.3.9 3l2.2 1.5-2.2 1.5c-1 .6-1.3 1.9-.9 3 .3 1.1 1.1 1.9 2.2 2.3l2.6.9-1.1 2.4c-.5 1.1-.2 2.4.8 3 1 .6 2.3.3 3-.7l1.4-2.1 2-1.4 2 1.4 1.4 2.1c.6.9 1.9 1.2 3 .7 1.1-.6 1.4-1.9.8-3l-1.1-2.4 2.6-.9c1.1-.4 1.9-1.2 2.2-2.3.4-1.1.1-2.3-.9-3l-2.2-1.5 2.2-1.5c1-.6 1.3-1.9.9-3zM12 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" /></svg>
+                                </div>
+                                <span className="font-bold text-xs sm:text-sm">Snowflake</span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => { setDbType('bigquery'); setConfig({ ...config }) }}
+                                className={`p-3 sm:p-4 rounded-xl border flex flex-col items-center justify-center space-y-3 transition-all ${dbType === 'bigquery' ? 'bg-primary/5 border-primary shadow-sm' : 'border-[var(--border)] hover:bg-[var(--muted)]'}`}
+                            >
+                                <div className={`p-2 rounded-lg ${dbType === 'bigquery' ? 'bg-primary text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
+                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 20.4l-4.5-4.5c1.4-1.8 2.2-4.1 2.2-6.5C20.2 4.2 15.9 0 10.7 0S1.2 4.2 1.2 9.5s4.2 9.5 9.5 9.5c2.4 0 4.6-.8 6.5-2.2l4.5 4.5c.3.3.7.4 1 .4s.7-.1 1-.4c.5-.6.5-1.5-.2-2.1zM10.7 16c-3.6 0-6.5-2.9-6.5-6.5S7.1 3 10.7 3s6.5 2.9 6.5 6.5-2.9 6.5-6.5 6.5z" /></svg>
+                                </div>
+                                <span className="font-bold text-xs sm:text-sm">BigQuery</span>
                             </button>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Host</label>
-                                <Input required placeholder="db.example.com" value={config.host} onChange={e => setConfig({ ...config, host: e.target.value })} />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Port</label>
-                                <Input required placeholder={dbType === 'postgres' ? '5432' : '3306'} value={config.port} onChange={e => setConfig({ ...config, port: e.target.value })} />
-                            </div>
-                        </div>
+                        {dbType === 'postgres' || dbType === 'mysql' ? (
+                            <>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Host</label>
+                                        <Input required placeholder="db.example.com" value={config.host} onChange={e => setConfig({ ...config, host: e.target.value })} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Port</label>
+                                        <Input required placeholder={dbType === 'postgres' ? '5432' : '3306'} value={config.port} onChange={e => setConfig({ ...config, port: e.target.value })} />
+                                    </div>
+                                </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Database Name</label>
-                            <Input required placeholder="production_db" value={config.database} onChange={e => setConfig({ ...config, database: e.target.value })} />
-                        </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Database Name</label>
+                                    <Input required placeholder="production_db" value={config.database} onChange={e => setConfig({ ...config, database: e.target.value })} />
+                                </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Username</label>
-                                <Input required placeholder="readonly_user" value={config.user} onChange={e => setConfig({ ...config, user: e.target.value })} />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Password</label>
-                                <Input required type="password" placeholder="••••••••" value={config.password} onChange={e => setConfig({ ...config, password: e.target.value })} />
-                            </div>
-                        </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Username</label>
+                                        <Input required placeholder="readonly_user" value={config.user} onChange={e => setConfig({ ...config, user: e.target.value })} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Password</label>
+                                        <Input required type="password" placeholder="••••••••" value={config.password} onChange={e => setConfig({ ...config, password: e.target.value })} />
+                                    </div>
+                                </div>
+                            </>
+                        ) : dbType === 'snowflake' ? (
+                            <>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Account Identifier</label>
+                                        <Input required placeholder="xy12345.us-east-1" value={config.host} onChange={e => setConfig({ ...config, host: e.target.value })} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Warehouse</label>
+                                        <Input required placeholder="COMPUTE_WH" value={config.warehouse} onChange={e => setConfig({ ...config, warehouse: e.target.value })} />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Database</label>
+                                        <Input required placeholder="SNOWFLAKE_SAMPLE_DATA" value={config.database} onChange={e => setConfig({ ...config, database: e.target.value })} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Schema</label>
+                                        <Input required placeholder="PUBLIC" value={config.schema} onChange={e => setConfig({ ...config, schema: e.target.value })} />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Username</label>
+                                        <Input required placeholder="readonly_user" value={config.user} onChange={e => setConfig({ ...config, user: e.target.value })} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Password</label>
+                                        <Input required type="password" placeholder="••••••••" value={config.password} onChange={e => setConfig({ ...config, password: e.target.value })} />
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Project ID</label>
+                                    <Input required placeholder="my-gcp-project-123" value={config.host} onChange={e => setConfig({ ...config, host: e.target.value })} />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Client Email</label>
+                                    <Input required placeholder="service-account@my-gcp-project-123.iam.gserviceaccount.com" value={config.user} onChange={e => setConfig({ ...config, user: e.target.value })} />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Private Key</label>
+                                    <Input required type="password" placeholder="-----BEGIN PRIVATE KEY-----\nMIIEvwIBAD..." value={config.privateKey} onChange={e => setConfig({ ...config, privateKey: e.target.value })} />
+                                </div>
+                            </>
+                        )}
 
                         <div className="bg-blue-50 border border-blue-100 p-3 sm:p-4 rounded-xl flex items-start space-x-3">
                             <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />

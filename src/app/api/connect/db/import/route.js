@@ -3,6 +3,8 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { Client as PGClient } from 'pg'
 import mysql from 'mysql2/promise'
+import snowflake from 'snowflake-sdk'
+import { BigQuery } from '@google-cloud/bigquery'
 
 export async function POST(request) {
     const { type, config, tables } = await request.json()
@@ -43,6 +45,30 @@ export async function POST(request) {
                 user: config.user,
                 password: config.password,
             })
+        } else if (type === 'snowflake') {
+            remoteClient = snowflake.createConnection({
+                account: config.host,
+                username: config.user,
+                password: config.password,
+                warehouse: config.warehouse,
+                database: config.database,
+                schema: config.schema || 'PUBLIC',
+                role: config.role || undefined
+            });
+            await new Promise((resolve, reject) => {
+                remoteClient.connect((err, conn) => {
+                    if (err) return reject(err);
+                    resolve(conn);
+                });
+            });
+        } else if (type === 'bigquery') {
+            remoteClient = new BigQuery({
+                projectId: config.host,
+                credentials: {
+                    client_email: config.user,
+                    private_key: config.privateKey.replace(/\\n/g, '\n'),
+                }
+            });
         }
 
         for (const tableName of tables) {
@@ -65,6 +91,34 @@ export async function POST(request) {
 
                 const [dataRows] = await remoteClient.execute(`SELECT * FROM \`${tableName}\` LIMIT 1000`)
                 rows = dataRows
+            } else if (type === 'snowflake') {
+                columns = await new Promise((resolve, reject) => {
+                    remoteClient.execute({
+                        sqlText: `DESCRIBE TABLE "${config.database}"."${config.schema || 'PUBLIC'}"."${tableName}"`,
+                        complete: (err, stmt, rows) => {
+                            if (err) return reject(err);
+                            resolve(rows.map(r => ({ name: r.name, type: 'text' })));
+                        }
+                    });
+                });
+
+                rows = await new Promise((resolve, reject) => {
+                    remoteClient.execute({
+                        sqlText: `SELECT * FROM "${config.database}"."${config.schema || 'PUBLIC'}"."${tableName}" LIMIT 1000`,
+                        complete: (err, stmt, rowsData) => {
+                            if (err) return reject(err);
+                            resolve(rowsData);
+                        }
+                    });
+                });
+            } else if (type === 'bigquery') {
+                const dataset = remoteClient.dataset(config.database);
+                const table = dataset.table(tableName);
+                const [metadata] = await table.getMetadata();
+                columns = metadata.schema.fields.map(f => ({ name: f.name, type: 'text' }));
+
+                const [rowsData] = await table.getRows({ maxResults: 1000 });
+                rows = rowsData;
             }
 
             // Create entry in Supabase
@@ -124,6 +178,9 @@ export async function POST(request) {
 
         if (type === 'postgres') await remoteClient.end()
         else if (type === 'mysql') await remoteClient.end()
+        else if (type === 'snowflake') {
+            await new Promise(resolve => remoteClient.destroy((err, conn) => resolve(conn)));
+        }
 
         return NextResponse.json({ success: true })
     } catch (error) {
