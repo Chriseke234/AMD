@@ -68,16 +68,23 @@ export async function POST(request) {
 
         // 3. Create table via RPC
         const columns = headers.map(h => ({ name: h, type: 'text' }))
-        const { error: createError } = await supabase.rpc('create_dataset_table', {
+        const { error: createError } = await supabase.rpc('create_secure_dataset_table', {
             p_table_name: tableName,
             p_columns: columns
         })
-        if (createError) throw createError
+        if (createError) {
+            console.error("Secure Table Creation Error:", createError);
+            const { error: oldCreateError } = await supabase.rpc('create_dataset_table', {
+                p_table_name: tableName,
+                p_columns: columns
+            });
+            if (oldCreateError) throw oldCreateError;
+        }
 
         // 4. Insert data in batches
         const batchSize = 100
         for (let i = 0; i < dataRows.length; i += batchSize) {
-            const batch = dataRows.slice(i, i + batchSize)
+            const batch = dataRows.slice(i, i + batchSize).map(r => ({ ...r, user_id: user.id }))
             const { error: insertError } = await supabase.rpc('insert_dataset_data', {
                 p_table_name: tableName,
                 p_data: batch
