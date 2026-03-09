@@ -104,6 +104,26 @@ function NewDatasetContent() {
                 </div>
             )}
 
+            {status === "error" && (
+                <div className="p-6 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start space-x-4 animate-in fade-in slide-in-from-top-4 mb-6">
+                    <AlertCircle className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
+                    <div>
+                        <h3 className="font-bold text-red-500">Upload Failed</h3>
+                        <p className="text-sm text-red-400 leading-relaxed mb-4">
+                            There was an error uploading your file or saving its data. Please ensure it's a valid CSV/Excel file and try again.
+                        </p>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="bg-white/10 border-white/10 hover:bg-white/20 text-white"
+                            onClick={() => setStatus("idle")}
+                        >
+                            Dismiss
+                        </Button>
+                    </div>
+                </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="p-8 border-dashed border-2 flex flex-col items-center justify-center text-center hover:border-primary/50 transition-colors cursor-pointer group" onClick={() => document.getElementById('file-upload').click()}>
                     <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -118,7 +138,7 @@ function NewDatasetContent() {
                             <span className="truncate flex-1">{file.name}</span>
                         </div>
                     )}
-                    <Button className="w-full" disabled={!file || uploading} onClick={handleUpload}>
+                    <Button className="w-full" disabled={!file || uploading} onClick={(e) => { e.stopPropagation(); handleUpload(); }}>
                         {uploading ? "Uploading..." : "Import File"}
                     </Button>
                 </Card>
